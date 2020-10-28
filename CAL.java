@@ -39,7 +39,7 @@ public class CAL
 		// If theres no errors print success.
 		System.out.println(inputFile + " parsed successfully");
 
-		// If theres errors print failure.
+		// If there's errors print failure.
 
   }
 }

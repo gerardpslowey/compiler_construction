@@ -1,43 +1,43 @@
 grammar CAL;
 
-prog:               (decl_list func_list main)* ;
+program:               (decl_list function_list main)* ;
 
 decl_list:          (decl SEMI decl_list | WS) ;
 decl:               var_decl | const_decl ;
-var_decl:           VARIABLE ID COL type ;
-const_decl:         CONSTANT ID COL type ASSIGN expr ;
+var_decl:           VARIABLE ID COLON type ;
+const_decl:         CONSTANT ID COLON type ASSIGN expression ;
 
-func_list:          function func_list | WS ;
-function:           type ID LBR param_list RBR IS
+function_list:          function function_list | WS ;
+function:           type ID LBR parameter_list RBR IS
                     decl_list
                     BEGIN
-                    stm_block
-                    RETURN LBR expr | WS RBR SEMI
+                    statement_block
+                    RETURN LBR expression | WS RBR SEMI
                     END
                     ;
 
 type:               INTEGER | BOOLEAN | VOID ;
-param_list:         nemp_param_list | WS ;
-nemp_param_list:    ID COL type | ID COL type COMMA nemp_param_list ;
+parameter_list:     nemp_parameter_list | WS ;
+nemp_parameter_list:    ID COLON type | ID COLON type COMMA nemp_parameter_list ;
 
 main:               MAIN
                     BEGIN
                     decl_list
-                    stm_block
+                    statement_block
                     END
                     ;
 
-stm_block:          statement stm_block | WS ;
-statement:          ID ASSIGN expr SEMI
+statement_block:          statement statement_block | WS ;
+statement:          ID ASSIGN expression SEMI
                   | ID LBR arg_list RBR SEMI
-                  | BEGIN stm_block END
-                  | IF condition BEGIN stm_block END
-                    ELSE BEGIN stm_block END
-                  | WHILE condition BEGIN stm_block END
+                  | BEGIN statement_block END
+                  | IF condition BEGIN statement_block END
+                    ELSE BEGIN statement_block END
+                  | WHILE condition BEGIN statement_block END
                   | SKIPP SEMI
                   ;
-expr:               expr op=(PLUS |MINUS) expr
-                  | LBR expr RBR
+expression:       expression op=(PLUS |MINUS) expression
+                  | LBR expression RBR
                   | ID LBR arg_list RBR
                   | ID
                   | MINUS ID
@@ -48,52 +48,52 @@ expr:               expr op=(PLUS |MINUS) expr
 
 condition:          NEGATE condition
                   | LBR condition RBR
-                  | expr comp_op expr
+                  | expression comp_op expression
                   | condition LBR OR | AND RBR condition
                   ;
-comp_op:            EQUAL | NOTEQUAL | LT | LTE | GT | GTE ;
+comp_op:            EQUAL | NEQUAL | LTHAN | LTHANE | GTHAN | GTHANE ;
 arg_list:           nemp_arg_list | WS ;
 nemp_arg_list:      ID | ID COMMA nemp_arg_list ;
 
-// non case sensitive reserved words
-VARIABLE :          V A R I A B L E;
-CONSTANT :          C O N S T A N T;
-RETURN :            R E T U R N;
-INTEGER :           I N T E G E R;
-BOOLEAN :           B O O L E A N;
-VOID :              V O I D;
-MAIN :              M A I N;
-IF :                I F;
-ELSE :              E L S E;
-TRUE :              T R U E;
-FALSE :             F A L S E;
-WHILE :             W H I L E;
-BEGIN :             B E G I N;
-END :               E N D;
-IS :                I S;
-SKIPP :             S K I P;
+
+// Reserved words in the language
+VARIABLE:          V A R I A B L E;
+CONSTANT:          C O N S T A N T;
+RETURN:            R E T U R N;
+INTEGER:           I N T E G E R;
+BOOLEAN:           B O O L E A N;
+VOID:              V O I D;
+MAIN:              M A I N;
+IF:                I F;
+ELSE:              E L S E;
+TRUE:              T R U E;
+FALSE:             F A L S E;
+WHILE:             W H I L E;
+BEGIN:             B E G I N;
+END:               E N D;
+IS:                I S;
+SKIPP:             S K I P;
+
 
 // Language Tokens
+COMMA:              ',';
+SEMI:               ';';
+COLON:              ':';
 ASSIGN:            ':=';
+LBR:                '(';
+RBR:                ')';
 PLUS:               '+';
 MINUS:              '-';
 NEGATE:             '~';
 OR:                 '|';
 AND:                '&';
 EQUAL:              '=';
-NOTEQUAL:           '!=';
-LT:                 '<';
-LTE:                '<=';
-GT:                 '>';
-GTE:                '>=';
-COMMA:              ',';
-SEMI:               ';';
-COL:                ':';
-LBR:                '(';
-RBR:                ')';
-OPENC:              '/*';
-CLOSEC:             '*/';
-SLC:                '//';
+NEQUAL:          '!=';
+LTHAN:              '<';
+LTHANE:             '<=';
+GTHAN:              '>';
+GTHANE:             '>=';
+
 
 // Non case sensitive tokens
 fragment A:		      'a' | 'A';
@@ -126,6 +126,7 @@ fragment UnderScore:  '_';
 
 NUMBER:             MINUS? Digit Digits* | '0';
 ID:                 Letter (Letter | Digits | UnderScore)*;
-WS:                 [ \t\n\r]+ -> channel(HIDDEN);
-MULTI_COMMENT:      OPENC (MULTI_COMMENT | .)*? CLOSEC -> channel(HIDDEN);
-SINGLE_COMMENT:     SLC ~[\r\n]* -> channel(HIDDEN);
+WS:                 [ \t\n\r]+ -> skip;
+
+MLINE_COMMENT: '/*' .*? '*/' -> skip ;
+LINE_COMMENT: '//' ~[\r\n]* -> skip;

@@ -1,4 +1,4 @@
-// Generated from CAL.g4 by ANTLR 4.7.2
+// Generated from c:\Users\g_slo\compiler_construction\CAL.g4 by ANTLR 4.8
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class CALParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -18,21 +18,21 @@ public class CALParser extends Parser {
 	public static final int
 		VARIABLE=1, CONSTANT=2, RETURN=3, INTEGER=4, BOOLEAN=5, VOID=6, MAIN=7, 
 		IF=8, ELSE=9, TRUE=10, FALSE=11, WHILE=12, BEGIN=13, END=14, IS=15, SKIPP=16, 
-		ASSIGN=17, PLUS=18, MINUS=19, NEGATE=20, OR=21, AND=22, EQUAL=23, NOTEQUAL=24, 
-		LT=25, LTE=26, GT=27, GTE=28, COMMA=29, SEMI=30, COL=31, LBR=32, RBR=33, 
-		OPENC=34, CLOSEC=35, SLC=36, NUMBER=37, ID=38, WS=39, MULTI_COMMENT=40, 
-		SINGLE_COMMENT=41;
+		COMMA=17, SEMI=18, COLON=19, ASSIGN=20, LBR=21, RBR=22, PLUS=23, MINUS=24, 
+		NEGATE=25, OR=26, AND=27, EQUAL=28, NEQUAL=29, LTHAN=30, LTHANE=31, GTHAN=32, 
+		GTHANE=33, NUMBER=34, ID=35, WS=36, MLINE_COMMENT=37, LINE_COMMENT=38;
 	public static final int
-		RULE_prog = 0, RULE_decl_list = 1, RULE_decl = 2, RULE_var_decl = 3, RULE_const_decl = 4, 
-		RULE_func_list = 5, RULE_function = 6, RULE_type = 7, RULE_param_list = 8, 
-		RULE_nemp_param_list = 9, RULE_main = 10, RULE_stm_block = 11, RULE_statement = 12, 
-		RULE_expr = 13, RULE_condition = 14, RULE_comp_op = 15, RULE_arg_list = 16, 
-		RULE_nemp_arg_list = 17;
+		RULE_program = 0, RULE_decl_list = 1, RULE_decl = 2, RULE_var_decl = 3, 
+		RULE_const_decl = 4, RULE_function_list = 5, RULE_function = 6, RULE_type = 7, 
+		RULE_parameter_list = 8, RULE_nemp_parameter_list = 9, RULE_main = 10, 
+		RULE_statement_block = 11, RULE_statement = 12, RULE_expression = 13, 
+		RULE_condition = 14, RULE_comp_op = 15, RULE_arg_list = 16, RULE_nemp_arg_list = 17;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"prog", "decl_list", "decl", "var_decl", "const_decl", "func_list", "function", 
-			"type", "param_list", "nemp_param_list", "main", "stm_block", "statement", 
-			"expr", "condition", "comp_op", "arg_list", "nemp_arg_list"
+			"program", "decl_list", "decl", "var_decl", "const_decl", "function_list", 
+			"function", "type", "parameter_list", "nemp_parameter_list", "main", 
+			"statement_block", "statement", "expression", "condition", "comp_op", 
+			"arg_list", "nemp_arg_list"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -40,9 +40,9 @@ public class CALParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, "':= '", "'+'", "'-'", "'~'", "'|'", "'&'", 
-			"'='", "'!='", "'<'", "'<='", "'>'", "'>='", "','", "';'", "':'", "'('", 
-			"')'", "'/*'", "'*/'", "'//'"
+			null, null, null, null, null, "','", "';'", "':'", "':='", "'('", "')'", 
+			"'+'", "'-'", "'~'", "'|'", "'&'", "'='", "'!='", "'<'", "'<='", "'>'", 
+			"'>='"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -50,9 +50,9 @@ public class CALParser extends Parser {
 		return new String[] {
 			null, "VARIABLE", "CONSTANT", "RETURN", "INTEGER", "BOOLEAN", "VOID", 
 			"MAIN", "IF", "ELSE", "TRUE", "FALSE", "WHILE", "BEGIN", "END", "IS", 
-			"SKIPP", "ASSIGN", "PLUS", "MINUS", "NEGATE", "OR", "AND", "EQUAL", "NOTEQUAL", 
-			"LT", "LTE", "GT", "GTE", "COMMA", "SEMI", "COL", "LBR", "RBR", "OPENC", 
-			"CLOSEC", "SLC", "NUMBER", "ID", "WS", "MULTI_COMMENT", "SINGLE_COMMENT"
+			"SKIPP", "COMMA", "SEMI", "COLON", "ASSIGN", "LBR", "RBR", "PLUS", "MINUS", 
+			"NEGATE", "OR", "AND", "EQUAL", "NEQUAL", "LTHAN", "LTHANE", "GTHAN", 
+			"GTHANE", "NUMBER", "ID", "WS", "MLINE_COMMENT", "LINE_COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -106,18 +106,18 @@ public class CALParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
-	public static class ProgContext extends ParserRuleContext {
+	public static class ProgramContext extends ParserRuleContext {
 		public List<Decl_listContext> decl_list() {
 			return getRuleContexts(Decl_listContext.class);
 		}
 		public Decl_listContext decl_list(int i) {
 			return getRuleContext(Decl_listContext.class,i);
 		}
-		public List<Func_listContext> func_list() {
-			return getRuleContexts(Func_listContext.class);
+		public List<Function_listContext> function_list() {
+			return getRuleContexts(Function_listContext.class);
 		}
-		public Func_listContext func_list(int i) {
-			return getRuleContext(Func_listContext.class,i);
+		public Function_listContext function_list(int i) {
+			return getRuleContext(Function_listContext.class,i);
 		}
 		public List<MainContext> main() {
 			return getRuleContexts(MainContext.class);
@@ -125,23 +125,15 @@ public class CALParser extends Parser {
 		public MainContext main(int i) {
 			return getRuleContext(MainContext.class,i);
 		}
-		public ProgContext(ParserRuleContext parent, int invokingState) {
+		public ProgramContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_prog; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterProg(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitProg(this);
-		}
+		@Override public int getRuleIndex() { return RULE_program; }
 	}
 
-	public final ProgContext prog() throws RecognitionException {
-		ProgContext _localctx = new ProgContext(_ctx, getState());
-		enterRule(_localctx, 0, RULE_prog);
+	public final ProgramContext program() throws RecognitionException {
+		ProgramContext _localctx = new ProgramContext(_ctx, getState());
+		enterRule(_localctx, 0, RULE_program);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -155,7 +147,7 @@ public class CALParser extends Parser {
 				setState(36);
 				decl_list();
 				setState(37);
-				func_list();
+				function_list();
 				setState(38);
 				main();
 				}
@@ -190,14 +182,6 @@ public class CALParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_decl_list; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterDecl_list(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitDecl_list(this);
-		}
 	}
 
 	public final Decl_listContext decl_list() throws RecognitionException {
@@ -253,14 +237,6 @@ public class CALParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_decl; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterDecl(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitDecl(this);
-		}
 	}
 
 	public final DeclContext decl() throws RecognitionException {
@@ -302,7 +278,7 @@ public class CALParser extends Parser {
 	public static class Var_declContext extends ParserRuleContext {
 		public TerminalNode VARIABLE() { return getToken(CALParser.VARIABLE, 0); }
 		public TerminalNode ID() { return getToken(CALParser.ID, 0); }
-		public TerminalNode COL() { return getToken(CALParser.COL, 0); }
+		public TerminalNode COLON() { return getToken(CALParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -310,14 +286,6 @@ public class CALParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_var_decl; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterVar_decl(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitVar_decl(this);
-		}
 	}
 
 	public final Var_declContext var_decl() throws RecognitionException {
@@ -331,7 +299,7 @@ public class CALParser extends Parser {
 			setState(57);
 			match(ID);
 			setState(58);
-			match(COL);
+			match(COLON);
 			setState(59);
 			type();
 			}
@@ -350,26 +318,18 @@ public class CALParser extends Parser {
 	public static class Const_declContext extends ParserRuleContext {
 		public TerminalNode CONSTANT() { return getToken(CALParser.CONSTANT, 0); }
 		public TerminalNode ID() { return getToken(CALParser.ID, 0); }
-		public TerminalNode COL() { return getToken(CALParser.COL, 0); }
+		public TerminalNode COLON() { return getToken(CALParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
 		public TerminalNode ASSIGN() { return getToken(CALParser.ASSIGN, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
 		public Const_declContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_const_decl; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterConst_decl(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitConst_decl(this);
-		}
 	}
 
 	public final Const_declContext const_decl() throws RecognitionException {
@@ -383,13 +343,13 @@ public class CALParser extends Parser {
 			setState(62);
 			match(ID);
 			setState(63);
-			match(COL);
+			match(COLON);
 			setState(64);
 			type();
 			setState(65);
 			match(ASSIGN);
 			setState(66);
-			expr(0);
+			expression(0);
 			}
 		}
 		catch (RecognitionException re) {
@@ -403,31 +363,23 @@ public class CALParser extends Parser {
 		return _localctx;
 	}
 
-	public static class Func_listContext extends ParserRuleContext {
+	public static class Function_listContext extends ParserRuleContext {
 		public FunctionContext function() {
 			return getRuleContext(FunctionContext.class,0);
 		}
-		public Func_listContext func_list() {
-			return getRuleContext(Func_listContext.class,0);
+		public Function_listContext function_list() {
+			return getRuleContext(Function_listContext.class,0);
 		}
 		public TerminalNode WS() { return getToken(CALParser.WS, 0); }
-		public Func_listContext(ParserRuleContext parent, int invokingState) {
+		public Function_listContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_func_list; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterFunc_list(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitFunc_list(this);
-		}
+		@Override public int getRuleIndex() { return RULE_function_list; }
 	}
 
-	public final Func_listContext func_list() throws RecognitionException {
-		Func_listContext _localctx = new Func_listContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_func_list);
+	public final Function_listContext function_list() throws RecognitionException {
+		Function_listContext _localctx = new Function_listContext(_ctx, getState());
+		enterRule(_localctx, 10, RULE_function_list);
 		try {
 			setState(72);
 			_errHandler.sync(this);
@@ -438,7 +390,7 @@ public class CALParser extends Parser {
 				setState(68);
 				function();
 				setState(69);
-				func_list();
+				function_list();
 				}
 				break;
 			case 2:
@@ -470,8 +422,8 @@ public class CALParser extends Parser {
 		public TerminalNode LBR(int i) {
 			return getToken(CALParser.LBR, i);
 		}
-		public Param_listContext param_list() {
-			return getRuleContext(Param_listContext.class,0);
+		public Parameter_listContext parameter_list() {
+			return getRuleContext(Parameter_listContext.class,0);
 		}
 		public TerminalNode RBR() { return getToken(CALParser.RBR, 0); }
 		public TerminalNode IS() { return getToken(CALParser.IS, 0); }
@@ -479,12 +431,12 @@ public class CALParser extends Parser {
 			return getRuleContext(Decl_listContext.class,0);
 		}
 		public TerminalNode BEGIN() { return getToken(CALParser.BEGIN, 0); }
-		public Stm_blockContext stm_block() {
-			return getRuleContext(Stm_blockContext.class,0);
+		public Statement_blockContext statement_block() {
+			return getRuleContext(Statement_blockContext.class,0);
 		}
 		public TerminalNode RETURN() { return getToken(CALParser.RETURN, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode WS() { return getToken(CALParser.WS, 0); }
 		public TerminalNode SEMI() { return getToken(CALParser.SEMI, 0); }
@@ -493,14 +445,6 @@ public class CALParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_function; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterFunction(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitFunction(this);
-		}
 	}
 
 	public final FunctionContext function() throws RecognitionException {
@@ -522,7 +466,7 @@ public class CALParser extends Parser {
 				setState(76);
 				match(LBR);
 				setState(77);
-				param_list();
+				parameter_list();
 				setState(78);
 				match(RBR);
 				setState(79);
@@ -532,13 +476,13 @@ public class CALParser extends Parser {
 				setState(81);
 				match(BEGIN);
 				setState(82);
-				stm_block();
+				statement_block();
 				setState(83);
 				match(RETURN);
 				setState(84);
 				match(LBR);
 				setState(85);
-				expr(0);
+				expression(0);
 				}
 				break;
 			case WS:
@@ -577,14 +521,6 @@ public class CALParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterType(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitType(this);
-		}
 	}
 
 	public final TypeContext type() throws RecognitionException {
@@ -617,28 +553,20 @@ public class CALParser extends Parser {
 		return _localctx;
 	}
 
-	public static class Param_listContext extends ParserRuleContext {
-		public Nemp_param_listContext nemp_param_list() {
-			return getRuleContext(Nemp_param_listContext.class,0);
+	public static class Parameter_listContext extends ParserRuleContext {
+		public Nemp_parameter_listContext nemp_parameter_list() {
+			return getRuleContext(Nemp_parameter_listContext.class,0);
 		}
 		public TerminalNode WS() { return getToken(CALParser.WS, 0); }
-		public Param_listContext(ParserRuleContext parent, int invokingState) {
+		public Parameter_listContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_param_list; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterParam_list(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitParam_list(this);
-		}
+		@Override public int getRuleIndex() { return RULE_parameter_list; }
 	}
 
-	public final Param_listContext param_list() throws RecognitionException {
-		Param_listContext _localctx = new Param_listContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_param_list);
+	public final Parameter_listContext parameter_list() throws RecognitionException {
+		Parameter_listContext _localctx = new Parameter_listContext(_ctx, getState());
+		enterRule(_localctx, 16, RULE_parameter_list);
 		try {
 			setState(97);
 			_errHandler.sync(this);
@@ -647,7 +575,7 @@ public class CALParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(95);
-				nemp_param_list();
+				nemp_parameter_list();
 				}
 				break;
 			case WS:
@@ -672,33 +600,25 @@ public class CALParser extends Parser {
 		return _localctx;
 	}
 
-	public static class Nemp_param_listContext extends ParserRuleContext {
+	public static class Nemp_parameter_listContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(CALParser.ID, 0); }
-		public TerminalNode COL() { return getToken(CALParser.COL, 0); }
+		public TerminalNode COLON() { return getToken(CALParser.COLON, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
 		public TerminalNode COMMA() { return getToken(CALParser.COMMA, 0); }
-		public Nemp_param_listContext nemp_param_list() {
-			return getRuleContext(Nemp_param_listContext.class,0);
+		public Nemp_parameter_listContext nemp_parameter_list() {
+			return getRuleContext(Nemp_parameter_listContext.class,0);
 		}
-		public Nemp_param_listContext(ParserRuleContext parent, int invokingState) {
+		public Nemp_parameter_listContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_nemp_param_list; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterNemp_param_list(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitNemp_param_list(this);
-		}
+		@Override public int getRuleIndex() { return RULE_nemp_parameter_list; }
 	}
 
-	public final Nemp_param_listContext nemp_param_list() throws RecognitionException {
-		Nemp_param_listContext _localctx = new Nemp_param_listContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_nemp_param_list);
+	public final Nemp_parameter_listContext nemp_parameter_list() throws RecognitionException {
+		Nemp_parameter_listContext _localctx = new Nemp_parameter_listContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_nemp_parameter_list);
 		try {
 			setState(108);
 			_errHandler.sync(this);
@@ -709,7 +629,7 @@ public class CALParser extends Parser {
 				setState(99);
 				match(ID);
 				setState(100);
-				match(COL);
+				match(COLON);
 				setState(101);
 				type();
 				}
@@ -720,13 +640,13 @@ public class CALParser extends Parser {
 				setState(102);
 				match(ID);
 				setState(103);
-				match(COL);
+				match(COLON);
 				setState(104);
 				type();
 				setState(105);
 				match(COMMA);
 				setState(106);
-				nemp_param_list();
+				nemp_parameter_list();
 				}
 				break;
 			}
@@ -748,22 +668,14 @@ public class CALParser extends Parser {
 		public Decl_listContext decl_list() {
 			return getRuleContext(Decl_listContext.class,0);
 		}
-		public Stm_blockContext stm_block() {
-			return getRuleContext(Stm_blockContext.class,0);
+		public Statement_blockContext statement_block() {
+			return getRuleContext(Statement_blockContext.class,0);
 		}
 		public TerminalNode END() { return getToken(CALParser.END, 0); }
 		public MainContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_main; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterMain(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitMain(this);
-		}
 	}
 
 	public final MainContext main() throws RecognitionException {
@@ -779,7 +691,7 @@ public class CALParser extends Parser {
 			setState(112);
 			decl_list();
 			setState(113);
-			stm_block();
+			statement_block();
 			setState(114);
 			match(END);
 			}
@@ -795,31 +707,23 @@ public class CALParser extends Parser {
 		return _localctx;
 	}
 
-	public static class Stm_blockContext extends ParserRuleContext {
+	public static class Statement_blockContext extends ParserRuleContext {
 		public StatementContext statement() {
 			return getRuleContext(StatementContext.class,0);
 		}
-		public Stm_blockContext stm_block() {
-			return getRuleContext(Stm_blockContext.class,0);
+		public Statement_blockContext statement_block() {
+			return getRuleContext(Statement_blockContext.class,0);
 		}
 		public TerminalNode WS() { return getToken(CALParser.WS, 0); }
-		public Stm_blockContext(ParserRuleContext parent, int invokingState) {
+		public Statement_blockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_stm_block; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterStm_block(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitStm_block(this);
-		}
+		@Override public int getRuleIndex() { return RULE_statement_block; }
 	}
 
-	public final Stm_blockContext stm_block() throws RecognitionException {
-		Stm_blockContext _localctx = new Stm_blockContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_stm_block);
+	public final Statement_blockContext statement_block() throws RecognitionException {
+		Statement_blockContext _localctx = new Statement_blockContext(_ctx, getState());
+		enterRule(_localctx, 22, RULE_statement_block);
 		try {
 			setState(120);
 			_errHandler.sync(this);
@@ -834,7 +738,7 @@ public class CALParser extends Parser {
 				setState(116);
 				statement();
 				setState(117);
-				stm_block();
+				statement_block();
 				}
 				break;
 			case WS:
@@ -862,8 +766,8 @@ public class CALParser extends Parser {
 	public static class StatementContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(CALParser.ID, 0); }
 		public TerminalNode ASSIGN() { return getToken(CALParser.ASSIGN, 0); }
-		public ExprContext expr() {
-			return getRuleContext(ExprContext.class,0);
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode SEMI() { return getToken(CALParser.SEMI, 0); }
 		public TerminalNode LBR() { return getToken(CALParser.LBR, 0); }
@@ -875,11 +779,11 @@ public class CALParser extends Parser {
 		public TerminalNode BEGIN(int i) {
 			return getToken(CALParser.BEGIN, i);
 		}
-		public List<Stm_blockContext> stm_block() {
-			return getRuleContexts(Stm_blockContext.class);
+		public List<Statement_blockContext> statement_block() {
+			return getRuleContexts(Statement_blockContext.class);
 		}
-		public Stm_blockContext stm_block(int i) {
-			return getRuleContext(Stm_blockContext.class,i);
+		public Statement_blockContext statement_block(int i) {
+			return getRuleContext(Statement_blockContext.class,i);
 		}
 		public List<TerminalNode> END() { return getTokens(CALParser.END); }
 		public TerminalNode END(int i) {
@@ -896,14 +800,6 @@ public class CALParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_statement; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterStatement(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitStatement(this);
-		}
 	}
 
 	public final StatementContext statement() throws RecognitionException {
@@ -921,7 +817,7 @@ public class CALParser extends Parser {
 				setState(123);
 				match(ASSIGN);
 				setState(124);
-				expr(0);
+				expression(0);
 				setState(125);
 				match(SEMI);
 				}
@@ -947,7 +843,7 @@ public class CALParser extends Parser {
 				setState(133);
 				match(BEGIN);
 				setState(134);
-				stm_block();
+				statement_block();
 				setState(135);
 				match(END);
 				}
@@ -962,7 +858,7 @@ public class CALParser extends Parser {
 				setState(139);
 				match(BEGIN);
 				setState(140);
-				stm_block();
+				statement_block();
 				setState(141);
 				match(END);
 				setState(142);
@@ -970,7 +866,7 @@ public class CALParser extends Parser {
 				setState(143);
 				match(BEGIN);
 				setState(144);
-				stm_block();
+				statement_block();
 				setState(145);
 				match(END);
 				}
@@ -985,7 +881,7 @@ public class CALParser extends Parser {
 				setState(149);
 				match(BEGIN);
 				setState(150);
-				stm_block();
+				statement_block();
 				setState(151);
 				match(END);
 				}
@@ -1012,14 +908,14 @@ public class CALParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ExprContext extends ParserRuleContext {
+	public static class ExpressionContext extends ParserRuleContext {
 		public Token op;
 		public TerminalNode LBR() { return getToken(CALParser.LBR, 0); }
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
 		}
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public TerminalNode RBR() { return getToken(CALParser.RBR, 0); }
 		public TerminalNode ID() { return getToken(CALParser.ID, 0); }
@@ -1031,31 +927,23 @@ public class CALParser extends Parser {
 		public TerminalNode TRUE() { return getToken(CALParser.TRUE, 0); }
 		public TerminalNode FALSE() { return getToken(CALParser.FALSE, 0); }
 		public TerminalNode PLUS() { return getToken(CALParser.PLUS, 0); }
-		public ExprContext(ParserRuleContext parent, int invokingState) {
+		public ExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_expr; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterExpr(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitExpr(this);
-		}
+		@Override public int getRuleIndex() { return RULE_expression; }
 	}
 
-	public final ExprContext expr() throws RecognitionException {
-		return expr(0);
+	public final ExpressionContext expression() throws RecognitionException {
+		return expression(0);
 	}
 
-	private ExprContext expr(int _p) throws RecognitionException {
+	private ExpressionContext expression(int _p) throws RecognitionException {
 		ParserRuleContext _parentctx = _ctx;
 		int _parentState = getState();
-		ExprContext _localctx = new ExprContext(_ctx, _parentState);
-		ExprContext _prevctx = _localctx;
+		ExpressionContext _localctx = new ExpressionContext(_ctx, _parentState);
+		ExpressionContext _prevctx = _localctx;
 		int _startState = 26;
-		enterRecursionRule(_localctx, 26, RULE_expr, _p);
+		enterRecursionRule(_localctx, 26, RULE_expression, _p);
 		int _la;
 		try {
 			int _alt;
@@ -1069,7 +957,7 @@ public class CALParser extends Parser {
 				setState(158);
 				match(LBR);
 				setState(159);
-				expr(0);
+				expression(0);
 				setState(160);
 				match(RBR);
 				}
@@ -1129,15 +1017,15 @@ public class CALParser extends Parser {
 					_prevctx = _localctx;
 					{
 					{
-					_localctx = new ExprContext(_parentctx, _parentState);
-					pushNewRecursionContext(_localctx, _startState, RULE_expr);
+					_localctx = new ExpressionContext(_parentctx, _parentState);
+					pushNewRecursionContext(_localctx, _startState, RULE_expression);
 					setState(175);
 					if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
 					setState(176);
-					((ExprContext)_localctx).op = _input.LT(1);
+					((ExpressionContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==PLUS || _la==MINUS) ) {
-						((ExprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						((ExpressionContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 					}
 					else {
 						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -1145,7 +1033,7 @@ public class CALParser extends Parser {
 						consume();
 					}
 					setState(177);
-					expr(9);
+					expression(9);
 					}
 					} 
 				}
@@ -1173,11 +1061,11 @@ public class CALParser extends Parser {
 		}
 		public TerminalNode LBR() { return getToken(CALParser.LBR, 0); }
 		public TerminalNode RBR() { return getToken(CALParser.RBR, 0); }
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
 		}
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public Comp_opContext comp_op() {
 			return getRuleContext(Comp_opContext.class,0);
@@ -1188,14 +1076,6 @@ public class CALParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_condition; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterCondition(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitCondition(this);
-		}
 	}
 
 	public final ConditionContext condition() throws RecognitionException {
@@ -1237,11 +1117,11 @@ public class CALParser extends Parser {
 			case 3:
 				{
 				setState(190);
-				expr(0);
+				expression(0);
 				setState(191);
 				comp_op();
 				setState(192);
-				expr(0);
+				expression(0);
 				}
 				break;
 			case 4:
@@ -1295,23 +1175,15 @@ public class CALParser extends Parser {
 
 	public static class Comp_opContext extends ParserRuleContext {
 		public TerminalNode EQUAL() { return getToken(CALParser.EQUAL, 0); }
-		public TerminalNode NOTEQUAL() { return getToken(CALParser.NOTEQUAL, 0); }
-		public TerminalNode LT() { return getToken(CALParser.LT, 0); }
-		public TerminalNode LTE() { return getToken(CALParser.LTE, 0); }
-		public TerminalNode GT() { return getToken(CALParser.GT, 0); }
-		public TerminalNode GTE() { return getToken(CALParser.GTE, 0); }
+		public TerminalNode NEQUAL() { return getToken(CALParser.NEQUAL, 0); }
+		public TerminalNode LTHAN() { return getToken(CALParser.LTHAN, 0); }
+		public TerminalNode LTHANE() { return getToken(CALParser.LTHANE, 0); }
+		public TerminalNode GTHAN() { return getToken(CALParser.GTHAN, 0); }
+		public TerminalNode GTHANE() { return getToken(CALParser.GTHANE, 0); }
 		public Comp_opContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_comp_op; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterComp_op(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitComp_op(this);
-		}
 	}
 
 	public final Comp_opContext comp_op() throws RecognitionException {
@@ -1323,7 +1195,7 @@ public class CALParser extends Parser {
 			{
 			setState(207);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQUAL) | (1L << NOTEQUAL) | (1L << LT) | (1L << LTE) | (1L << GT) | (1L << GTE))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQUAL) | (1L << NEQUAL) | (1L << LTHAN) | (1L << LTHANE) | (1L << GTHAN) | (1L << GTHANE))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -1353,14 +1225,6 @@ public class CALParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_arg_list; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterArg_list(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitArg_list(this);
-		}
 	}
 
 	public final Arg_listContext arg_list() throws RecognitionException {
@@ -1409,14 +1273,6 @@ public class CALParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_nemp_arg_list; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).enterNemp_arg_list(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof CALListener ) ((CALListener)listener).exitNemp_arg_list(this);
-		}
 	}
 
 	public final Nemp_arg_listContext nemp_arg_list() throws RecognitionException {
@@ -1460,13 +1316,13 @@ public class CALParser extends Parser {
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
 		case 13:
-			return expr_sempred((ExprContext)_localctx, predIndex);
+			return expression_sempred((ExpressionContext)_localctx, predIndex);
 		case 14:
 			return condition_sempred((ConditionContext)_localctx, predIndex);
 		}
 		return true;
 	}
-	private boolean expr_sempred(ExprContext _localctx, int predIndex) {
+	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
 			return precpred(_ctx, 8);
@@ -1482,7 +1338,7 @@ public class CALParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3+\u00de\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3(\u00de\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\3\2\3\2\3\2\3\2\7\2+\n\2\f\2\16\2.\13\2\3\3\3\3\3\3\3\3\3\3"+
@@ -1499,58 +1355,58 @@ public class CALParser extends Parser {
 		"\3\20\5\20\u00c8\n\20\3\20\3\20\3\20\7\20\u00cd\n\20\f\20\16\20\u00d0"+
 		"\13\20\3\21\3\21\3\22\3\22\5\22\u00d6\n\22\3\23\3\23\3\23\3\23\5\23\u00dc"+
 		"\n\23\3\23\2\4\34\36\24\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$\2\5"+
-		"\3\2\6\b\3\2\24\25\3\2\31\36\2\u00e5\2,\3\2\2\2\4\64\3\2\2\2\68\3\2\2"+
-		"\2\b:\3\2\2\2\n?\3\2\2\2\fJ\3\2\2\2\16]\3\2\2\2\20_\3\2\2\2\22c\3\2\2"+
-		"\2\24n\3\2\2\2\26p\3\2\2\2\30z\3\2\2\2\32\u009d\3\2\2\2\34\u00af\3\2\2"+
-		"\2\36\u00c7\3\2\2\2 \u00d1\3\2\2\2\"\u00d5\3\2\2\2$\u00db\3\2\2\2&\'\5"+
-		"\4\3\2\'(\5\f\7\2()\5\26\f\2)+\3\2\2\2*&\3\2\2\2+.\3\2\2\2,*\3\2\2\2,"+
-		"-\3\2\2\2-\3\3\2\2\2.,\3\2\2\2/\60\5\6\4\2\60\61\7 \2\2\61\62\5\4\3\2"+
-		"\62\65\3\2\2\2\63\65\7)\2\2\64/\3\2\2\2\64\63\3\2\2\2\65\5\3\2\2\2\66"+
-		"9\5\b\5\2\679\5\n\6\28\66\3\2\2\28\67\3\2\2\29\7\3\2\2\2:;\7\3\2\2;<\7"+
-		"(\2\2<=\7!\2\2=>\5\20\t\2>\t\3\2\2\2?@\7\4\2\2@A\7(\2\2AB\7!\2\2BC\5\20"+
-		"\t\2CD\7\23\2\2DE\5\34\17\2E\13\3\2\2\2FG\5\16\b\2GH\5\f\7\2HK\3\2\2\2"+
-		"IK\7)\2\2JF\3\2\2\2JI\3\2\2\2K\r\3\2\2\2LM\5\20\t\2MN\7(\2\2NO\7\"\2\2"+
-		"OP\5\22\n\2PQ\7#\2\2QR\7\21\2\2RS\5\4\3\2ST\7\17\2\2TU\5\30\r\2UV\7\5"+
-		"\2\2VW\7\"\2\2WX\5\34\17\2X^\3\2\2\2YZ\7)\2\2Z[\7#\2\2[\\\7 \2\2\\^\7"+
-		"\20\2\2]L\3\2\2\2]Y\3\2\2\2^\17\3\2\2\2_`\t\2\2\2`\21\3\2\2\2ad\5\24\13"+
-		"\2bd\7)\2\2ca\3\2\2\2cb\3\2\2\2d\23\3\2\2\2ef\7(\2\2fg\7!\2\2go\5\20\t"+
-		"\2hi\7(\2\2ij\7!\2\2jk\5\20\t\2kl\7\37\2\2lm\5\24\13\2mo\3\2\2\2ne\3\2"+
-		"\2\2nh\3\2\2\2o\25\3\2\2\2pq\7\t\2\2qr\7\17\2\2rs\5\4\3\2st\5\30\r\2t"+
-		"u\7\20\2\2u\27\3\2\2\2vw\5\32\16\2wx\5\30\r\2x{\3\2\2\2y{\7)\2\2zv\3\2"+
-		"\2\2zy\3\2\2\2{\31\3\2\2\2|}\7(\2\2}~\7\23\2\2~\177\5\34\17\2\177\u0080"+
-		"\7 \2\2\u0080\u009e\3\2\2\2\u0081\u0082\7(\2\2\u0082\u0083\7\"\2\2\u0083"+
-		"\u0084\5\"\22\2\u0084\u0085\7#\2\2\u0085\u0086\7 \2\2\u0086\u009e\3\2"+
-		"\2\2\u0087\u0088\7\17\2\2\u0088\u0089\5\30\r\2\u0089\u008a\7\20\2\2\u008a"+
-		"\u009e\3\2\2\2\u008b\u008c\7\n\2\2\u008c\u008d\5\36\20\2\u008d\u008e\7"+
-		"\17\2\2\u008e\u008f\5\30\r\2\u008f\u0090\7\20\2\2\u0090\u0091\7\13\2\2"+
-		"\u0091\u0092\7\17\2\2\u0092\u0093\5\30\r\2\u0093\u0094\7\20\2\2\u0094"+
-		"\u009e\3\2\2\2\u0095\u0096\7\16\2\2\u0096\u0097\5\36\20\2\u0097\u0098"+
-		"\7\17\2\2\u0098\u0099\5\30\r\2\u0099\u009a\7\20\2\2\u009a\u009e\3\2\2"+
-		"\2\u009b\u009c\7\22\2\2\u009c\u009e\7 \2\2\u009d|\3\2\2\2\u009d\u0081"+
-		"\3\2\2\2\u009d\u0087\3\2\2\2\u009d\u008b\3\2\2\2\u009d\u0095\3\2\2\2\u009d"+
-		"\u009b\3\2\2\2\u009e\33\3\2\2\2\u009f\u00a0\b\17\1\2\u00a0\u00a1\7\"\2"+
-		"\2\u00a1\u00a2\5\34\17\2\u00a2\u00a3\7#\2\2\u00a3\u00b0\3\2\2\2\u00a4"+
-		"\u00a5\7(\2\2\u00a5\u00a6\7\"\2\2\u00a6\u00a7\5\"\22\2\u00a7\u00a8\7#"+
-		"\2\2\u00a8\u00b0\3\2\2\2\u00a9\u00b0\7(\2\2\u00aa\u00ab\7\25\2\2\u00ab"+
-		"\u00b0\7(\2\2\u00ac\u00b0\7\'\2\2\u00ad\u00b0\7\f\2\2\u00ae\u00b0\7\r"+
-		"\2\2\u00af\u009f\3\2\2\2\u00af\u00a4\3\2\2\2\u00af\u00a9\3\2\2\2\u00af"+
-		"\u00aa\3\2\2\2\u00af\u00ac\3\2\2\2\u00af\u00ad\3\2\2\2\u00af\u00ae\3\2"+
-		"\2\2\u00b0\u00b6\3\2\2\2\u00b1\u00b2\f\n\2\2\u00b2\u00b3\t\3\2\2\u00b3"+
-		"\u00b5\5\34\17\13\u00b4\u00b1\3\2\2\2\u00b5\u00b8\3\2\2\2\u00b6\u00b4"+
-		"\3\2\2\2\u00b6\u00b7\3\2\2\2\u00b7\35\3\2\2\2\u00b8\u00b6\3\2\2\2\u00b9"+
-		"\u00ba\b\20\1\2\u00ba\u00bb\7\26\2\2\u00bb\u00c8\5\36\20\7\u00bc\u00bd"+
-		"\7\"\2\2\u00bd\u00be\5\36\20\2\u00be\u00bf\7#\2\2\u00bf\u00c8\3\2\2\2"+
-		"\u00c0\u00c1\5\34\17\2\u00c1\u00c2\5 \21\2\u00c2\u00c3\5\34\17\2\u00c3"+
-		"\u00c8\3\2\2\2\u00c4\u00c5\7\30\2\2\u00c5\u00c6\7#\2\2\u00c6\u00c8\5\36"+
-		"\20\3\u00c7\u00b9\3\2\2\2\u00c7\u00bc\3\2\2\2\u00c7\u00c0\3\2\2\2\u00c7"+
-		"\u00c4\3\2\2\2\u00c8\u00ce\3\2\2\2\u00c9\u00ca\f\4\2\2\u00ca\u00cb\7\""+
-		"\2\2\u00cb\u00cd\7\27\2\2\u00cc\u00c9\3\2\2\2\u00cd\u00d0\3\2\2\2\u00ce"+
-		"\u00cc\3\2\2\2\u00ce\u00cf\3\2\2\2\u00cf\37\3\2\2\2\u00d0\u00ce\3\2\2"+
-		"\2\u00d1\u00d2\t\4\2\2\u00d2!\3\2\2\2\u00d3\u00d6\5$\23\2\u00d4\u00d6"+
-		"\7)\2\2\u00d5\u00d3\3\2\2\2\u00d5\u00d4\3\2\2\2\u00d6#\3\2\2\2\u00d7\u00dc"+
-		"\7(\2\2\u00d8\u00d9\7(\2\2\u00d9\u00da\7\37\2\2\u00da\u00dc\5$\23\2\u00db"+
-		"\u00d7\3\2\2\2\u00db\u00d8\3\2\2\2\u00dc%\3\2\2\2\21,\648J]cnz\u009d\u00af"+
-		"\u00b6\u00c7\u00ce\u00d5\u00db";
+		"\3\2\6\b\3\2\31\32\3\2\36#\2\u00e5\2,\3\2\2\2\4\64\3\2\2\2\68\3\2\2\2"+
+		"\b:\3\2\2\2\n?\3\2\2\2\fJ\3\2\2\2\16]\3\2\2\2\20_\3\2\2\2\22c\3\2\2\2"+
+		"\24n\3\2\2\2\26p\3\2\2\2\30z\3\2\2\2\32\u009d\3\2\2\2\34\u00af\3\2\2\2"+
+		"\36\u00c7\3\2\2\2 \u00d1\3\2\2\2\"\u00d5\3\2\2\2$\u00db\3\2\2\2&\'\5\4"+
+		"\3\2\'(\5\f\7\2()\5\26\f\2)+\3\2\2\2*&\3\2\2\2+.\3\2\2\2,*\3\2\2\2,-\3"+
+		"\2\2\2-\3\3\2\2\2.,\3\2\2\2/\60\5\6\4\2\60\61\7\24\2\2\61\62\5\4\3\2\62"+
+		"\65\3\2\2\2\63\65\7&\2\2\64/\3\2\2\2\64\63\3\2\2\2\65\5\3\2\2\2\669\5"+
+		"\b\5\2\679\5\n\6\28\66\3\2\2\28\67\3\2\2\29\7\3\2\2\2:;\7\3\2\2;<\7%\2"+
+		"\2<=\7\25\2\2=>\5\20\t\2>\t\3\2\2\2?@\7\4\2\2@A\7%\2\2AB\7\25\2\2BC\5"+
+		"\20\t\2CD\7\26\2\2DE\5\34\17\2E\13\3\2\2\2FG\5\16\b\2GH\5\f\7\2HK\3\2"+
+		"\2\2IK\7&\2\2JF\3\2\2\2JI\3\2\2\2K\r\3\2\2\2LM\5\20\t\2MN\7%\2\2NO\7\27"+
+		"\2\2OP\5\22\n\2PQ\7\30\2\2QR\7\21\2\2RS\5\4\3\2ST\7\17\2\2TU\5\30\r\2"+
+		"UV\7\5\2\2VW\7\27\2\2WX\5\34\17\2X^\3\2\2\2YZ\7&\2\2Z[\7\30\2\2[\\\7\24"+
+		"\2\2\\^\7\20\2\2]L\3\2\2\2]Y\3\2\2\2^\17\3\2\2\2_`\t\2\2\2`\21\3\2\2\2"+
+		"ad\5\24\13\2bd\7&\2\2ca\3\2\2\2cb\3\2\2\2d\23\3\2\2\2ef\7%\2\2fg\7\25"+
+		"\2\2go\5\20\t\2hi\7%\2\2ij\7\25\2\2jk\5\20\t\2kl\7\23\2\2lm\5\24\13\2"+
+		"mo\3\2\2\2ne\3\2\2\2nh\3\2\2\2o\25\3\2\2\2pq\7\t\2\2qr\7\17\2\2rs\5\4"+
+		"\3\2st\5\30\r\2tu\7\20\2\2u\27\3\2\2\2vw\5\32\16\2wx\5\30\r\2x{\3\2\2"+
+		"\2y{\7&\2\2zv\3\2\2\2zy\3\2\2\2{\31\3\2\2\2|}\7%\2\2}~\7\26\2\2~\177\5"+
+		"\34\17\2\177\u0080\7\24\2\2\u0080\u009e\3\2\2\2\u0081\u0082\7%\2\2\u0082"+
+		"\u0083\7\27\2\2\u0083\u0084\5\"\22\2\u0084\u0085\7\30\2\2\u0085\u0086"+
+		"\7\24\2\2\u0086\u009e\3\2\2\2\u0087\u0088\7\17\2\2\u0088\u0089\5\30\r"+
+		"\2\u0089\u008a\7\20\2\2\u008a\u009e\3\2\2\2\u008b\u008c\7\n\2\2\u008c"+
+		"\u008d\5\36\20\2\u008d\u008e\7\17\2\2\u008e\u008f\5\30\r\2\u008f\u0090"+
+		"\7\20\2\2\u0090\u0091\7\13\2\2\u0091\u0092\7\17\2\2\u0092\u0093\5\30\r"+
+		"\2\u0093\u0094\7\20\2\2\u0094\u009e\3\2\2\2\u0095\u0096\7\16\2\2\u0096"+
+		"\u0097\5\36\20\2\u0097\u0098\7\17\2\2\u0098\u0099\5\30\r\2\u0099\u009a"+
+		"\7\20\2\2\u009a\u009e\3\2\2\2\u009b\u009c\7\22\2\2\u009c\u009e\7\24\2"+
+		"\2\u009d|\3\2\2\2\u009d\u0081\3\2\2\2\u009d\u0087\3\2\2\2\u009d\u008b"+
+		"\3\2\2\2\u009d\u0095\3\2\2\2\u009d\u009b\3\2\2\2\u009e\33\3\2\2\2\u009f"+
+		"\u00a0\b\17\1\2\u00a0\u00a1\7\27\2\2\u00a1\u00a2\5\34\17\2\u00a2\u00a3"+
+		"\7\30\2\2\u00a3\u00b0\3\2\2\2\u00a4\u00a5\7%\2\2\u00a5\u00a6\7\27\2\2"+
+		"\u00a6\u00a7\5\"\22\2\u00a7\u00a8\7\30\2\2\u00a8\u00b0\3\2\2\2\u00a9\u00b0"+
+		"\7%\2\2\u00aa\u00ab\7\32\2\2\u00ab\u00b0\7%\2\2\u00ac\u00b0\7$\2\2\u00ad"+
+		"\u00b0\7\f\2\2\u00ae\u00b0\7\r\2\2\u00af\u009f\3\2\2\2\u00af\u00a4\3\2"+
+		"\2\2\u00af\u00a9\3\2\2\2\u00af\u00aa\3\2\2\2\u00af\u00ac\3\2\2\2\u00af"+
+		"\u00ad\3\2\2\2\u00af\u00ae\3\2\2\2\u00b0\u00b6\3\2\2\2\u00b1\u00b2\f\n"+
+		"\2\2\u00b2\u00b3\t\3\2\2\u00b3\u00b5\5\34\17\13\u00b4\u00b1\3\2\2\2\u00b5"+
+		"\u00b8\3\2\2\2\u00b6\u00b4\3\2\2\2\u00b6\u00b7\3\2\2\2\u00b7\35\3\2\2"+
+		"\2\u00b8\u00b6\3\2\2\2\u00b9\u00ba\b\20\1\2\u00ba\u00bb\7\33\2\2\u00bb"+
+		"\u00c8\5\36\20\7\u00bc\u00bd\7\27\2\2\u00bd\u00be\5\36\20\2\u00be\u00bf"+
+		"\7\30\2\2\u00bf\u00c8\3\2\2\2\u00c0\u00c1\5\34\17\2\u00c1\u00c2\5 \21"+
+		"\2\u00c2\u00c3\5\34\17\2\u00c3\u00c8\3\2\2\2\u00c4\u00c5\7\35\2\2\u00c5"+
+		"\u00c6\7\30\2\2\u00c6\u00c8\5\36\20\3\u00c7\u00b9\3\2\2\2\u00c7\u00bc"+
+		"\3\2\2\2\u00c7\u00c0\3\2\2\2\u00c7\u00c4\3\2\2\2\u00c8\u00ce\3\2\2\2\u00c9"+
+		"\u00ca\f\4\2\2\u00ca\u00cb\7\27\2\2\u00cb\u00cd\7\34\2\2\u00cc\u00c9\3"+
+		"\2\2\2\u00cd\u00d0\3\2\2\2\u00ce\u00cc\3\2\2\2\u00ce\u00cf\3\2\2\2\u00cf"+
+		"\37\3\2\2\2\u00d0\u00ce\3\2\2\2\u00d1\u00d2\t\4\2\2\u00d2!\3\2\2\2\u00d3"+
+		"\u00d6\5$\23\2\u00d4\u00d6\7&\2\2\u00d5\u00d3\3\2\2\2\u00d5\u00d4\3\2"+
+		"\2\2\u00d6#\3\2\2\2\u00d7\u00dc\7%\2\2\u00d8\u00d9\7%\2\2\u00d9\u00da"+
+		"\7\23\2\2\u00da\u00dc\5$\23\2\u00db\u00d7\3\2\2\2\u00db\u00d8\3\2\2\2"+
+		"\u00dc%\3\2\2\2\21,\648J]cnz\u009d\u00af\u00b6\u00c7\u00ce\u00d5\u00db";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
