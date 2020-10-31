@@ -1,6 +1,5 @@
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,13 +10,13 @@ public class CAL
 	public static void main (String[] args) throws Exception
 	{
 		String inputFile = null;
-
 		if (args.length >0)
 			inputFile = args [0];
 
 		assert inputFile != null;
 		File file = new File(inputFile);
 		FileInputStream is = null;
+		boolean success = true;
 
 		try {
 			is = new FileInputStream (file);
@@ -28,18 +27,20 @@ public class CAL
 			CALParser parser = new CALParser (tokens);
 			parser.removeErrorListeners();
 
-			ParseTree tree = parser.prog ();
+			parser.prog ();
 			is.close();
 		}
 		catch (IOException e) {
+			success = false;
+			// If theres errors print failure.
 			System.out.println(inputFile + " has not parsed");
 		}
 
+		if(success){
+			// If theres no errors print success.
+			System.out.println(inputFile + " parsed successfully");
 
-		// If theres no errors print success.
-		System.out.println(inputFile + " parsed successfully");
-
-		// If there's errors print failure.
+		}
 
   }
 }
