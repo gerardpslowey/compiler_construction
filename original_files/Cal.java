@@ -1,4 +1,5 @@
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.CharStreams;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -12,16 +13,14 @@ public class Cal
 		String inputFile = null;
 
 		//file name can be given from the args or the scanner.
-		if (args.length != 0) {
+		if (args.length > 0) {
 			inputFile = args[0];
 		}
-
-		else {
+		else{
 			System.err.print("Please enter the input file: ");
 			inputFile = in.next();
 			in.close();
 		}
-		
 		InputStream is = System.in;
 		if (inputFile != null){
 			is = new FileInputStream(inputFile);
