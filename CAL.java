@@ -39,20 +39,18 @@ public class Cal
 		//remove default error listeners and add my own ParseErrorListener
 		calLexer lexer = new calLexer(CharStreams.fromStream(is));
 		lexer.removeErrorListeners();
-		lexer.addErrorListener(ParseErrorListener.INSTANCE);
+		lexer.addErrorListener(CalErrorListener.INSTANCE);
 
 		CommonTokenStream tokens = new CommonTokenStream (lexer);
 		calParser parser = new calParser(tokens);
 
 		//again, replace the default error listeners for the parser.
 		parser.removeErrorListeners();
-		parser.addErrorListener(ParseErrorListener.INSTANCE);
+		parser.addErrorListener(CalErrorListener.INSTANCE);
 		parser.prog();
-
-		// System.out.println(inputFile + ParseErrorListener.INSTANCE.toString());
 		
 		// REPORT_SYNTAX_ERRORS is set to true in CalErrorListener by default.
-		if(ParseErrorListener.SYNTAX_ERRORS)
+		if(CalErrorListener.SYNTAX_ERRORS)
 			System.out.println(inputFile + " parsed successfully");
 		else
 			System.out.println(inputFile + " has not parsed");

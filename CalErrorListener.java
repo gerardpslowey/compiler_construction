@@ -1,8 +1,8 @@
 import org.antlr.v4.runtime.*;
 
-public class ParseErrorListener extends BaseErrorListener {
+public class CalErrorListener extends BaseErrorListener {
 
-    public static final ParseErrorListener INSTANCE = new ParseErrorListener();
+    public static final CalErrorListener INSTANCE = new CalErrorListener();
     public static boolean SYNTAX_ERRORS = true;
 
     @Override
@@ -10,8 +10,11 @@ public class ParseErrorListener extends BaseErrorListener {
         if (!SYNTAX_ERRORS) {
             return;
         }
+
+        else {
+            SYNTAX_ERRORS = false;
+        }
         
-        //if syntaxError is called, then we can change the boolean.
-    SYNTAX_ERRORS = false;
+    //if syntaxError is called, then we can change the boolean.
     }
 }
