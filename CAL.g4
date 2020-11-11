@@ -122,9 +122,10 @@ GTHAN:               '>'  ;
 GTHANE:              '>=' ;
 
 
+
 NUMBER:             MINUS? Digit (Digits)* | '0' ;
 ID:                 Letter (Letter | Digits | UnderScore)* ;
 
 WS:                 [ \t\n\r]+ -> skip ;
-MLINE_COMMENT:      '/*' .*? '*/' -> skip;
-LINE_COMMENT:       '//' ~[\r\n]* -> skip;
+COMMENT :           '/*' (COMMENT|.)*? '*/' -> channel(HIDDEN) ;
+LINE_COMMENT  :     '//' .*? '\n' -> channel(HIDDEN) ;
