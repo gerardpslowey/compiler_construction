@@ -1,49 +1,51 @@
 grammar cal;
 
+// Non-terminals
 prog:                decl_list function_list main ;
-
 decl_list:           (decl SEMI decl_list)? ;              
 decl:                var_decl | const_decl ;
-var_decl:            VARIABLE ID COLON type ;
-const_decl:          CONSTANT ID COLON type ASSIGN expression ;
-
+var_decl:            Variable ID COLON type ;
+const_decl:          Constant ID COLON type ASSIGN expression ;
 function_list:       (function function_list)? ;
-function:            type ID LBR parameter_list RBR IS
+function:            type ID LBR parameter_list RBR Is
                      decl_list
-                     BEGIN
+                     Begin
                      statement_block
-                     RETURN LBR (expression)? RBR SEMI
-                     END
+                     Return LBR (expression)? RBR SEMI
+                     End
                      ;
 
-type:                INTEGER | BOOLEAN | VOID ;
+type:                Integer | Boolean | Void ;
 parameter_list:      nemp_parameter_list? ;
-nemp_parameter_list: ID COLON type (COMMA nemp_parameter_list)? ;
+nemp_parameter_list: ID COLON type (COMMA nemp_parameter_list)? ; // Here
 
-main:                MAIN
-                     BEGIN
+main:                Main
+                     Begin
                      decl_list
                      statement_block
-                     END
+                     End
                      ;
 
 statement_block:     (statement statement_block)? ;
 statement:           ID ASSIGN expression SEMI
                      | ID LBR arg_list RBR SEMI
-                     | BEGIN statement_block END
-                     | IF condition BEGIN statement_block END
-                     ELSE BEGIN statement_block END
-                     | WHILE condition BEGIN statement_block END
-                     | SKIP_ SEMI
+                     | Begin statement_block End
+                     | If condition Begin statement_block End
+                     Else Begin statement_block End
+                     | While condition Begin statement_block End
+                     | Skipp SEMI
                      ;
 
-expression:          frag (binary_arith_op frag)* ;
+expression:          frag (binary_arith_op frag)* ;                  // and here
+
 binary_arith_op:     PLUS | MINUS ;
 frag:                MINUS? ID (LBR arg_list RBR)?
                      | NUMBER 
-                     | TRUE 
-                     | FALSE 
-                     | LBR expression RBR;
+                     | True 
+                     | False 
+                     | LBR expression RBR
+                     ;
+
 condition:           NEGATE condition
                      | LBR condition RBR
                      | expression comp_op expression
@@ -54,7 +56,7 @@ comp_op:             EQUAL | NEQUAL | LTHAN | LTHANE | GTHAN | GTHANE ;
 arg_list:            nemp_arg_list? ;
 nemp_arg_list:       ID (COMMA nemp_arg_list)? ;
 
-
+// Case insensitive fragments
 fragment A:		      'a' | 'A' ;
 fragment B:		      'b' | 'B' ;
 fragment C:		      'c' | 'C' ;
@@ -78,31 +80,30 @@ fragment V:          'v' | 'V' ;
 fragment W:          'w' | 'W' ;
 fragment Y:		      'y' | 'Y' ;
 
-
+fragment Letter :    [a-zA-Z] ;
 fragment Digit :     [1-9] ;
 fragment Digits :    [0-9] ;
-fragment Letter :    [a-zA-Z] ;
-fragment UnderScore: '_' ;
+fragment Underscore: '_' ;
 
+// Matching terminals with fragments
+Variable :           V A R I A B L E ;
+Constant :           C O N S T A N T ;
+Return :             R E T U R N ;
+Integer :            I N T E G E R ;
+Boolean :            B O O L E A N ;
+Void :               V O I D ;
+Main :               M A I N ;
+If :                 I F ;
+Else :               E L S E ;
+True :               T R U E ;
+False :              F A L S E ;
+While :              W H I L E ;
+Begin :              B E G I N ;
+End :                E N D ;
+Is :                 I S ;
+Skipp :              S K I P ;
 
-VARIABLE :           V A R I A B L E ;
-CONSTANT :           C O N S T A N T ;
-RETURN :             R E T U R N ;
-INTEGER :            I N T E G E R ;
-BOOLEAN :            B O O L E A N ;
-VOID :               V O I D ;
-MAIN :               M A I N ;
-IF :                 I F ;
-ELSE :               E L S E ;
-TRUE :               T R U E ;
-FALSE :              F A L S E ;
-WHILE :              W H I L E ;
-BEGIN :              B E G I N ;
-END :                E N D ;
-IS :                 I S ;
-SKIP_ :              S K I P ;
-
-
+// Matching terminals with tokens
 COMMA:               ','  ;
 SEMI:                ';'  ;
 COLON:               ':'  ;
@@ -121,11 +122,10 @@ LTHANE:              '<=' ;
 GTHAN:               '>'  ;
 GTHANE:              '>=' ;
 
+NUMBER:             MINUS? Digit (Digits)* | [0] ;
+ID:                 Letter(Letter | Digits | Underscore)* ;
 
-
-NUMBER:             MINUS? Digit (Digits)* | '0' ;
-ID:                 Letter (Letter | Digits | UnderScore)* ;
-
+// Just skip any whitespace
 WS:                 [ \t\n\r]+ -> skip ;
-COMMENT :           '/*' (COMMENT|.)*? '*/' -> channel(HIDDEN) ;
-LINE_COMMENT  :     '//' .*? '\n' -> channel(HIDDEN) ;
+ML_COMMENT :        '/*' (ML_COMMENT|.)*? '*/' -> skip ;
+LINE_COMMENT  :     '//' .*? '\n' -> skip ;

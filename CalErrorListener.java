@@ -2,19 +2,29 @@ import org.antlr.v4.runtime.*;
 
 public class CalErrorListener extends BaseErrorListener {
 
-    public static final CalErrorListener INSTANCE = new CalErrorListener();
-    public static boolean SYNTAX_ERRORS = true;
+    public static CalErrorListener INSTANCE = new CalErrorListener();
 
+    // Error listener called errors_present is true
+    public static boolean ERRORS_PRESENT = true;
+
+    // Success message by default
+    private String message = " parsed successfully";
+
+    // Override the syntax error definition
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e){
-        if (!SYNTAX_ERRORS) {
+        
+        // No lexer or parse errors
+        if (!ERRORS_PRESENT) {
             return;
         }
-
-        else {
-            SYNTAX_ERRORS = false;
-        }
-        
-    //if syntaxError is called, then we can change the boolean.
+    
+        message = " has not parsed";
     }
+
+    @Override
+    public String toString() {
+        return message;   
+    }
+
 }

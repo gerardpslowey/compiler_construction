@@ -9,50 +9,65 @@ public class Cal
 {
 	public static void main (String[] args) throws Exception{
 
-		//file name can be given from the args or the scanner.
 		Scanner in = new Scanner(System.in);
 		String inputFile = null;
 
+		// If the filename has been given on the command line
+		// Assign it to the inputFile variable
 		if (args.length == 1) {
 			inputFile = args[0];
 		}
 
-		else {
-			// Give the user a second chance to enter a file name
-			System.err.print("Please enter an input file name: ");
+		// Give the user a second chance to enter a file name
+		// if they have ran the program with no input
+		else if (args.length == 0) {
+			System.out.print("Please enter an input file name: ");
 			inputFile = in.next();
 			in.close();
+		}
+
+		// Otherwise the user has entered too much
+		else {
+			System.out.print("Only one input file is allowed");
+			System.exit(1);
 		}
 
 		InputStream is = System.in;
 		File file = new File(inputFile);
 		
+		// If the input file name is valid and 
+		// The file exists
 		if ((inputFile != null) && (file.exists())) {
 			is = new FileInputStream(inputFile);
 		}
 
+		// If the file cannot be found or is not valid
+		// inform the user and exit with an error code
 		else {
-			System.err.println("File " + inputFile + " not found");
+			System.out.println("File " + inputFile + " cannot be found");
 			System.exit(1);
 		}
 
-		//remove default error listeners and add my own ParseErrorListener
+		// Get a stream of tokens
 		calLexer lexer = new calLexer(CharStreams.fromStream(is));
+		
+		// Remove default error listeners and add my own CalErrorListener
 		lexer.removeErrorListeners();
 		lexer.addErrorListener(CalErrorListener.INSTANCE);
 
 		CommonTokenStream tokens = new CommonTokenStream (lexer);
+		
 		calParser parser = new calParser(tokens);
 
-		//again, replace the default error listeners for the parser.
+		// As before, replace the default error listeners for the parser
 		parser.removeErrorListeners();
 		parser.addErrorListener(CalErrorListener.INSTANCE);
+
+		// Then run the parser on the prog rule
 		parser.prog();
 		
-		// REPORT_SYNTAX_ERRORS is set to true in CalErrorListener by default.
-		if(CalErrorListener.SYNTAX_ERRORS)
-			System.out.println(inputFile + " parsed successfully");
-		else
-			System.out.println(inputFile + " has not parsed");
+		// Print out the result of the lexical analysis and parsing
+		System.out.println(inputFile + CalErrorListener.INSTANCE.toString());
+
 	}
 }
