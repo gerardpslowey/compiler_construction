@@ -124,7 +124,7 @@ STARTCOMMENT:        '/*' ;
 ENDCOMMENT:          '*/' ;
 OPENCOMMENT:         '//' ;
 
-
+// Handling numbers and identifiers
 NUMBER:             MINUS? Digit (Digits)* | [0] ;
 ID:                 Letter(Letter | Digits | Underscore)* ;
 
