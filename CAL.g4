@@ -17,7 +17,7 @@ function:            type ID LBR parameter_list RBR Is
 
 type:                Integer | Boolean | Void ;
 parameter_list:      nemp_parameter_list? ;
-nemp_parameter_list: ID COLON type (COMMA nemp_parameter_list)? ; // Here
+nemp_parameter_list: ID COLON type (COMMA nemp_parameter_list)? ;
 
 main:                Main
                      Begin
@@ -36,8 +36,7 @@ statement:           ID ASSIGN expression SEMI
                      | Skipp SEMI
                      ;
 
-expression:          frag (binary_arith_op frag)* ;                  // and here
-
+expression:          frag (binary_arith_op frag)* ;
 binary_arith_op:     PLUS | MINUS ;
 frag:                MINUS? ID (LBR arg_list RBR)?
                      | NUMBER 
@@ -76,8 +75,8 @@ fragment R:		      'r' | 'R' ;
 fragment S:		      's' | 'S' ;
 fragment T:		      't' | 'T' ;
 fragment U:		      'u' | 'U' ;
-fragment V:          'v' | 'V' ;
-fragment W:          'w' | 'W' ;
+fragment V:           'v' | 'V' ;
+fragment W:           'w' | 'W' ;
 fragment Y:		      'y' | 'Y' ;
 
 fragment Letter :    [a-zA-Z] ;
@@ -121,11 +120,15 @@ LTHAN:               '<'  ;
 LTHANE:              '<=' ;
 GTHAN:               '>'  ;
 GTHANE:              '>=' ;
+STARTCOMMENT:        '/*' ;
+ENDCOMMENT:          '*/' ;
+OPENCOMMENT:         '//' ;
+
 
 NUMBER:             MINUS? Digit (Digits)* | [0] ;
 ID:                 Letter(Letter | Digits | Underscore)* ;
 
 // Just skip any whitespace
 WS:                 [ \t\n\r]+ -> skip ;
-ML_COMMENT :        '/*' (ML_COMMENT|.)*? '*/' -> skip ;
-LINE_COMMENT  :     '//' .*? '\n' -> skip ;
+ML_COMMENT :        STARTCOMMENT (ML_COMMENT|.)*? ENDCOMMENT -> skip ;
+LINE_COMMENT  :     OPENCOMMENT .*? '\n' -> skip ;

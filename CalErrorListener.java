@@ -19,6 +19,8 @@ public class CalErrorListener extends BaseErrorListener {
             return;
         }
     
+        // Change message
+        // Errors have occurred
         message = " has not parsed";
     }
 

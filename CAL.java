@@ -55,7 +55,7 @@ public class Cal
 		lexer.removeErrorListeners();
 		lexer.addErrorListener(CalErrorListener.INSTANCE);
 
-		CommonTokenStream tokens = new CommonTokenStream (lexer);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		
 		calParser parser = new calParser(tokens);
 
