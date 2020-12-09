@@ -2,20 +2,27 @@ grammar cal;
 
 // Non-terminals
 prog:                decl_list function_list main ;
-decl_list:           (decl SEMI decl_list)? ;              
-decl:                var_decl | const_decl ;
+decl_list:           (decl SEMI decl_list)? ; 
+
+decl:                 var_decl
+                    | const_decl
+                    ;                      
+
 var_decl:            Variable ID COLON type ;
 const_decl:          Constant ID COLON type ASSIGN expression ;
 function_list:       (function function_list)? ;
+
 function:            type ID LBR parameter_list RBR Is
                      decl_list
                      Begin
                      statement_block
-                     Return LBR (expression)? RBR SEMI
+                     Return LBR returnStatement RBR SEMI
                      End
                      ;
 
-type:                Integer | Boolean | Void ;
+returnStatement:     (expression)? ;
+
+type:                (Integer | Boolean | Void) ;
 parameter_list:      nemp_parameter_list? ;
 nemp_parameter_list: ID COLON type (COMMA nemp_parameter_list)? ;
 
@@ -28,16 +35,17 @@ main:                Main
 
 statement_block:     (statement statement_block)? ;
 
-statement:           ID ASSIGN expression SEMI                    #AssignStm
-                     | ID LBR arg_list RBR SEMI                   #ParensStm
-                     | Begin statement_block End                  #BlockStm
-                     | If condition Begin statement_block End 
-                       Else Begin statement_block End             #IfElseStm
-                     | While condition Begin statement_block End  #WhileStm
-                     | Skipp SEMI                                 #SkipStm
+statement:           ID ASSIGN expression SEMI                                #AssignStm
+                     | ID LBR arg_list RBR SEMI                               #ParensStm
+                     | Begin statement_block End                              #BlockStm
+                     | If condition Begin statement_block End elseStatement   #IfElseStm
+                     | While condition Begin statement_block End              #WhileStm
+                     | Skipp SEMI                                             #SkipStm
                      ;
 
 // expression:          frag (binary_arith_op frag)* ; 
+
+elseStatement:       Else Begin statement_block End ;
 
 expression:          frag binary_arith_op frag                    #BinaryOp
                      | LBR expression RBR                         #ParensOp
@@ -47,20 +55,19 @@ expression:          frag binary_arith_op frag                    #BinaryOp
 
 
 binary_arith_op:     PLUS | MINUS ;
-frag:                MINUS? ID (LBR arg_list RBR)?
-                     | NUMBER 
-                     | True 
-                     | False 
-                     | LBR expression RBR
+frag:                MINUS? ID (LBR arg_list RBR)?                #NegOp
+                     | NUMBER                                     #NumOP
+                     | True                                       #BooleanOp
+                     | False                                      #BooleanOp
+                     | LBR expression RBR                         #ExprOp
                      ;
 
-condition:           NEGATE condition
-                     | LBR condition RBR
-                     | expression comp_op expression
-                     | condition (OR | AND) condition
+condition:           NEGATE condition                             #NegateOp
+                     | LBR condition RBR                          #ParensCondOp
+                     | expression op = (EQUAL | NEQUAL | LTHAN | LTHANE | GTHAN | GTHANE) expression              #ExprCompOp
+                     | condition op=(OR | AND) condition          #CondOp
                      ;
 
-comp_op:             EQUAL | NEQUAL | LTHAN | LTHANE | GTHAN | GTHANE ;
 arg_list:            nemp_arg_list? ;
 nemp_arg_list:       ID (COMMA nemp_arg_list)? ;
 
@@ -84,8 +91,8 @@ fragment R:		      'r' | 'R' ;
 fragment S:		      's' | 'S' ;
 fragment T:		      't' | 'T' ;
 fragment U:		      'u' | 'U' ;
-fragment V:           'v' | 'V' ;
-fragment W:           'w' | 'W' ;
+fragment V:         'v' | 'V' ;
+fragment W:         'w' | 'W' ;
 fragment Y:		      'y' | 'Y' ;
 
 fragment Letter :    [a-zA-Z] ;

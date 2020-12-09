@@ -52,6 +52,12 @@ public interface calVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunction(calParser.FunctionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link calParser#returnStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReturnStatement(calParser.ReturnStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link calParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -124,6 +130,12 @@ public interface calVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSkipStm(calParser.SkipStmContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link calParser#elseStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseStatement(calParser.ElseStatementContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code BinaryOp}
 	 * labeled alternative in {@link calParser#expression}.
 	 * @param ctx the parse tree
@@ -158,23 +170,61 @@ public interface calVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBinary_arith_op(calParser.Binary_arith_opContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link calParser#frag}.
+	 * Visit a parse tree produced by the {@code NegOp}
+	 * labeled alternative in {@link calParser#frag}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFrag(calParser.FragContext ctx);
+	T visitNegOp(calParser.NegOpContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link calParser#condition}.
+	 * Visit a parse tree produced by the {@code NumOP}
+	 * labeled alternative in {@link calParser#frag}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitCondition(calParser.ConditionContext ctx);
+	T visitNumOP(calParser.NumOPContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link calParser#comp_op}.
+	 * Visit a parse tree produced by the {@code BooleanOp}
+	 * labeled alternative in {@link calParser#frag}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitComp_op(calParser.Comp_opContext ctx);
+	T visitBooleanOp(calParser.BooleanOpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ExprOp}
+	 * labeled alternative in {@link calParser#frag}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprOp(calParser.ExprOpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NegateOp}
+	 * labeled alternative in {@link calParser#condition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNegateOp(calParser.NegateOpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code CondOp}
+	 * labeled alternative in {@link calParser#condition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCondOp(calParser.CondOpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ExprCompOp}
+	 * labeled alternative in {@link calParser#condition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprCompOp(calParser.ExprCompOpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ParensCondOp}
+	 * labeled alternative in {@link calParser#condition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitParensCondOp(calParser.ParensCondOpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link calParser#arg_list}.
 	 * @param ctx the parse tree

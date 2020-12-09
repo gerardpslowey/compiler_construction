@@ -1,199 +1,86 @@
-import java.util.*;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Stack;
+import java.util.Hashtable;
+import java.util.Arrays;
 
 public class SymbolTable
 {
-	Hashtable<String, LinkedList<String>> stcHash;
-	Hashtable<String, String> typeHash;
-	Hashtable<String, String> descHash;
-	
-	SymbolTable() {
-		this.stcHash = new Hashtable<>();
-		this.typeHash = new Hashtable<>();
-		this.descHash = new Hashtable<>();
-		
-		stcHash.put("program", new LinkedList<>());
-	}
-	
-	public void get(String id, String type, String scope) 
-	{
-		LinkedList<String> scopeList = stcHash.get(scope);
-		if(scopeList == null) 
-		{
-			System.out.println("Variable " + id + " not declared in " + scope);
-		}     
-	}
 
-	public String getType(String id, String scope) 
-	{
-		String type = typeHash.get(id+scope);
-		if(type != null) 
-		{
-			return type;
-		}
-		else 
-		{
-			type = typeHash.get(id+"program");
-			if(type != null) 
-			{
-				return type;
-			}
-		}
-		return null;
-	}
-	
-	
-	public String getDescription(String id, String scope) 
-	{
-		String description = descHash.get(id+scope);
-		if(description != null) 
-			return description;
-		else 
-		{
-			description = descHash.get(id+"program");
-			if(description != null) 
-			{
-				return description;
-			}
-		}
-		return null;
-	}
+    final String marker = " ";
 
-	public LinkedList<String> getScopeTable(String scope) 
-	{
-		return stcHash.get(scope);
-	}
+    Hashtable<Integer, LinkedList<SymbolTableEntry>> symbolTable;
+    Stack<String> undoStack;
 
-	public int getParams(String id) 
-	{
-		LinkedList<String> scopeList = stcHash.get(id);
-		int count = 0;
-		for(int i = 0; i < scopeList.size(); i++) 
-		{
-			String description = descHash.get(scopeList.get(i)+id);
-			if(description.equals("param")) 
-			{
-				count++;
-			}
-		}
-		return count;
-	}
-	
-	public boolean checkForDups(String id, String scope) 
-	{
-		LinkedList<String> scopeList = stcHash.get(scope);
-		LinkedList<String> programList = stcHash.get("program");
-		if(scope.equals("program")) 
-		{
-			return programList.indexOf(id) == programList.lastIndexOf(id);
-		}
-		return ((scopeList.indexOf(id) == scopeList.lastIndexOf(id)) && (programList.indexOf(id) == -1));
-		
-	}
+    public SymbolTable() {
+        this.symbolTable = new Hashtable<>();
+        this.undoStack = new Stack<>();
+        this.undoStack.push(marker);
+    }
 
-	public String getParamType(int index, String scope) 
-	{
-		int count = 0;
-		LinkedList<String> ids = stcHash.get(scope);
-			for(String id : ids) 
-			{
-				String type = typeHash.get(id+scope);
-				String description = descHash.get(id+scope);
-				if(description.equals("param")) 
-				{
-					count++;
-					if(count == index) 
-					{
-						return type;
-					}
-				}
-			}
-		return null;
-	}
-	
-	public void put(String id, String type, String information, String scope) 
-	{
-		LinkedList<String> scopeList = stcHash.get(scope);
-		if(scopeList == null) 
-		{
-			scopeList = new LinkedList<>();
-			scopeList.add(id);
-			stcHash.put(scope, scopeList);
-		}
-		else 
-		{
-			scopeList.addFirst(id);
-		}
-		typeHash.put(id+scope, type);
-		descHash.put(id+scope, information);
-	}
-	
-	public ArrayList<String> getFunctions() 
-	{
-		LinkedList<String> scopeList = stcHash.get("program");
-		ArrayList<String> functions = new ArrayList<String>();
-		for(int i = 0; i < scopeList.size(); i++) 
-		{
-			String description = descHash.get(scopeList.get(i)+"program");
-			if(description.equals("function"))
-			{
-				functions.add(scopeList.get(i));
-			}
-		}
-		return functions;
-	}
+    public Object getSymbol(String id) {
+        Integer key = id.hashCode();
 
-	public ArrayList<String> getVars() 
-	{
-		ArrayList<String> vars = new ArrayList<String>();
-		Enumeration enumm = stcHash.keys();
-		while(enumm.hasMoreElements()) 
-		{
-			String scope = (String) enumm.nextElement();
-			LinkedList<String> scopeList = stcHash.get(scope);
-			for(int i = 0; i < scopeList.size(); i++) 
-			{
-				String description = descHash.get(scopeList.get(i)+scope);
-				if(description.equals("var"))
-				{
-					vars.add(scopeList.get(i));
-				}
-			}
-		}
-		return vars;
-	}
+        if (symbolTable.containsKey(key)) {
+            LinkedList bucket = symbolTable.get(key);
 
-	public boolean functionCheck(String id) 
-	{
-		LinkedList<String> scopeList = stcHash.get("program");
-		for(int i = 0; i < scopeList.size(); i++) 
-		{
-				String description = descHash.get(scopeList.get(i)+"program");
-				if(description.equals("function") && scopeList.get(i).equals(id)) 
-				{
-					return true;
-				}
-		}
-		return false;
-	}
+            // Search the bucket for the symbol entry
+            ListIterator listIter = bucket.listIterator();
+            while (listIter.hasNext()) {
+                SymbolTableEntry smbl = (SymbolTableEntry)listIter.next();
+                if (smbl.id.equals(id))
+                    return (Object)smbl;
+            }
+        } 
+        return (Object) new SymbolTableEntry();      
+    }
 
-	public void printSt() 
-	{
-		Enumeration enumm = stcHash.keys();
-		while(enumm.hasMoreElements()) 
-		{
-			String scope = (String) enumm.nextElement();
-			System.out.println("Scope: " + scope);
-			LinkedList<String> ids = stcHash.get(scope);
-			int num = 0;
-			for(String id : ids) 
-			{
-				num++;
-				String type = typeHash.get(id+scope);
-				String description = descHash.get(id+scope);
-				System.out.println(num + " type: " + type + " id: " + id  + " desc: " + description);
-			}
-			System.out.println("--------");
-		}
-	}
-	
+    public void putSymbol(String id, String type, DataType declType, String scope) {
+        SymbolTableEntry newEntry = new SymbolTableEntry(id, type, declType, scope);
+        
+        // Push symbol to undo stack
+        undoStack.add(id);
+        
+        Integer key = id.hashCode();
+        if (symbolTable.containsKey(key)) {
+            LinkedList bucket = symbolTable.get(key);
+            bucket.offerFirst(newEntry);
+        } else {
+            LinkedList bucket = new LinkedList<>(Arrays.asList(newEntry));
+            symbolTable.put(key, bucket);
+        }
+    }
+
+    public void openScope() {
+        undoStack.add(marker);
+    }
+
+    public void closeScope() {
+        String symbol = undoStack.pop();
+        
+        while (!symbol.equals(marker)) {
+            Integer key = symbol.hashCode();
+            LinkedList bucket = symbolTable.get(key);
+
+            ListIterator listIter = bucket.listIterator();
+            while (listIter.hasNext()) {
+                SymbolTableEntry smbl = (SymbolTableEntry)listIter.next();
+                if (smbl.id.equals(symbol))
+                    bucket.remove(smbl);
+            }
+            symbol = undoStack.pop();
+        }
+    }
+
+    public void printStack() {
+        System.out.println("---------PRINTING UNDO STACK---------");
+        System.out.println(Arrays.toString(this.undoStack.toArray()));
+        System.out.println("-------------------------------------");
+    }
+
+    public void printHashTable() {
+        System.out.println("--------PRINTING HASH TABLE----------");
+        System.out.println(symbolTable.toString());
+        System.out.println("-------------------------------------");
+    }
 }

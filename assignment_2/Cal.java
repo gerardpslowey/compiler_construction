@@ -6,12 +6,16 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Scanner;
 
-public class Cal extends Parser
-{
+public class Cal {
+
+	static SymbolTable st = new SymbolTable();
+	static String scope = "global";
+
 	public static void main (String[] args) throws Exception{
 
 		Scanner in = new Scanner(System.in);
 		String inputFile = null;
+
 
 		// If the filename has been given on the command line
 		// Assign it to the inputFile variable
@@ -49,29 +53,37 @@ public class Cal extends Parser
 			System.exit(1);
 		}
 
-		// Get a stream of tokens
-		calLexer lexer = new calLexer(CharStreams.fromStream(is));
-		
-		// Remove default error listeners and add my own CalErrorListener
-		lexer.removeErrorListeners();
-		lexer.addErrorListener(CalErrorListener.INSTANCE);
+		try{
+			// Get a stream of tokens
+			calLexer lexer = new calLexer(CharStreams.fromStream(is));
+			
+			// Remove default error listeners and add my own CalErrorListener
+			lexer.removeErrorListeners();
+			lexer.addErrorListener(new CalErrorListener());
 
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		
-		calParser parser = new calParser(tokens);
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			
+			calParser parser = new calParser(tokens);
 
-		// As before, replace the default error listeners for the parser
-		parser.removeErrorListeners();
-		parser.addErrorListener(CalErrorListener.INSTANCE);
+			// As before, replace the default error listeners for the parser
+			parser.removeErrorListeners();
+			parser.addErrorListener(new CalErrorListener());
 
-		// Parse tree or abstract syntax tree
-		ParseTree tree = parser.prog();
-		
-		EvalVisitor eval = new EvalVisitor();
-		eval.visit(tree);
+			// Parse tree or abstract syntax tree
+			ParseTree tree = parser.prog();
+			
+			// Initiate a walk of the tree
+			SemanticCheckVisitor visitor = new SemanticCheckVisitor();
+			System.out.println(visitor.visit(tree));
 
-		// Printing tree as text
-		System.out.println(tree.toStringTree(parser));
-				
+			// IRCodeVisitor IRVisitor = new IRCodeVisitor();
+			// System.out.println(IRVisitor.visit(tree));
+
+			System.out.println(inputFile + " parsed successfully");
+
+		} catch (Exception err) {
+			System.out.println(err.getMessage());
+			System.out.println(inputFile + " has not parsed");
+		}
 	}
 }
