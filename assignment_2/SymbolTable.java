@@ -6,11 +6,11 @@ import java.util.Arrays;
 
 public class SymbolTable
 {
-
-    final String marker = " ";
+    final String marker = "/";
 
     Hashtable<Integer, LinkedList<SymbolTableEntry>> symbolTable;
-    Stack<String> undoStack;
+    // Stack to handle scope
+    Stack<String> undoStack; 
 
     public SymbolTable() {
         this.symbolTable = new Hashtable<>();
@@ -18,36 +18,37 @@ public class SymbolTable
         this.undoStack.push(marker);
     }
 
-    public Object getSymbol(String id) {
-        Integer key = id.hashCode();
+    public Object get(String id) {
+        Integer k = id.hashCode();
 
-        if (symbolTable.containsKey(key)) {
-            LinkedList bucket = symbolTable.get(key);
+        if (symbolTable.containsKey(k)) {
+            LinkedList<SymbolTableEntry> entry = symbolTable.get(k);
 
-            // Search the bucket for the symbol entry
-            ListIterator listIter = bucket.listIterator();
+            // Iterate through the symbol table for the entry
+            ListIterator<SymbolTableEntry> listIter = entry.listIterator();
             while (listIter.hasNext()) {
                 SymbolTableEntry smbl = (SymbolTableEntry)listIter.next();
                 if (smbl.id.equals(id))
                     return (Object)smbl;
             }
         } 
-        return (Object) new SymbolTableEntry();      
+        return new SymbolTableEntry();      
     }
 
-    public void putSymbol(String id, String type, DataType declType, String scope) {
-        SymbolTableEntry newEntry = new SymbolTableEntry(id, type, declType, scope);
+
+    public void put(String id, String type, String origin, String scope) {
+        SymbolTableEntry newEntry = new SymbolTableEntry(id, type, origin, scope);
         
         // Push symbol to undo stack
         undoStack.add(id);
         
-        Integer key = id.hashCode();
-        if (symbolTable.containsKey(key)) {
-            LinkedList bucket = symbolTable.get(key);
-            bucket.offerFirst(newEntry);
+        Integer k = id.hashCode();
+        if (symbolTable.containsKey(k)) {
+            LinkedList<SymbolTableEntry> entry = symbolTable.get(k);
+            entry.offerFirst(newEntry);
         } else {
-            LinkedList bucket = new LinkedList<>(Arrays.asList(newEntry));
-            symbolTable.put(key, bucket);
+            LinkedList<SymbolTableEntry> entry = new LinkedList<>(Arrays.asList(newEntry));
+            symbolTable.put(k, entry);
         }
     }
 
@@ -59,28 +60,27 @@ public class SymbolTable
         String symbol = undoStack.pop();
         
         while (!symbol.equals(marker)) {
-            Integer key = symbol.hashCode();
-            LinkedList bucket = symbolTable.get(key);
-
-            ListIterator listIter = bucket.listIterator();
+            Integer k = symbol.hashCode();
+            LinkedList<SymbolTableEntry> entry = symbolTable.get(k);
+            ListIterator<SymbolTableEntry> listIter = entry.listIterator();
             while (listIter.hasNext()) {
-                SymbolTableEntry smbl = (SymbolTableEntry)listIter.next();
+                SymbolTableEntry smbl = (SymbolTableEntry) listIter.next();
                 if (smbl.id.equals(symbol))
-                    bucket.remove(smbl);
+                    entry.remove(smbl);
             }
             symbol = undoStack.pop();
         }
     }
 
     public void printStack() {
-        System.out.println("---------PRINTING UNDO STACK---------");
+        System.out.println("** Printing Stack **");
         System.out.println(Arrays.toString(this.undoStack.toArray()));
-        System.out.println("-------------------------------------");
+        System.out.println("********************");
     }
 
-    public void printHashTable() {
-        System.out.println("--------PRINTING HASH TABLE----------");
+    public void printSymbolTable() {
+        System.out.println("** Printing Symbol Table **");
         System.out.println(symbolTable.toString());
-        System.out.println("-------------------------------------");
+        System.out.println("***************************");
     }
 }

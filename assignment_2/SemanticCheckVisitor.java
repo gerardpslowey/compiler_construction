@@ -1,257 +1,266 @@
 import java.util.ArrayList;
-
-import javax.xml.crypto.Data;
+import java.util.Arrays;
 
 public class SemanticCheckVisitor extends calBaseVisitor<String> {
    
+   // Data structures to handle scope, symbols and progFuncs 
    private static String scope;
-   SymbolTable st = new SymbolTable();
-   private ArrayList<String> functions = new ArrayList<>();
+   SymbolTable symbolTable = new SymbolTable();
+   ArrayList<String> progFuncs = new ArrayList<>();
 
+   // Data Types used
+   private String bool = "boolean";
+	private String integer = "integer";
+	private String unknown = "void";
+	private String varDecl = "variable";
+	private String constDecl = "constant";
+   private String function = "function";
+   
+   private String closingBracket = ")";
 
    @Override 
    public String visitProg(calParser.ProgContext ctx) { 
       scope = "global";
-      String data = visitChildren(ctx); 
-
-      // Check all functions have been used
-      if (functions.size() > 0) {
-         for (String func : functions) {
-            System.out.println("Program Error: Function (" + func +") was declared but never used");
+      
+      // Checking if every function has been called
+      if (progFuncs.size() != 0) {
+         for (String function : progFuncs) {
+            System.out.println("Program Error: The function '" + function + "' was declared but never called");
          }
       }
-      
-      return data;
+      symbolTable.closeScope();
+      return visitChildren(ctx);
    }
 
-   @Override 
-   public String visitDecl_list(calParser.Decl_listContext ctx) { 
-      return visitChildren(ctx); 
-   }
-
-   // @Override 
-   // public String visitDecl(calParser.DeclContext ctx) { 
-   //    return visitChildren(ctx); 
-   // }
-
-   // var_decl: Variable ID COLON type ;
    @Override 
    public String visitVar_decl(calParser.Var_declContext ctx) { 
       String id = ctx.ID().getText();
       String type = visit(ctx.type());
 
-      SymbolTableEntry e = (SymbolTableEntry) st.getSymbol(id);
-      if (id.equalsIgnoreCase(e.id) && scope.equals(e.scope)) {
-         System.out.println("Declaration Error: '" + id + "' already declared in " + scope + " scope");
-      } else {
-         st.putSymbol(id, type.toString(), DataType.var_decl, scope);
+      SymbolTableEntry tableEntry = (SymbolTableEntry) symbolTable.get(id);
+
+      // Ensure case insensitivity
+      if (id.equalsIgnoreCase(tableEntry.id) & scope.equalsIgnoreCase(tableEntry.scope)) {
+         System.out.println("Declare Error: '" + id + "' already declared in " + scope + " scope");
+      } 
+      
+      else {
+         symbolTable.put(id, type, varDecl, scope);
       }
 
-      return visitChildren(ctx); 
+      return unknown; 
    }
 
-
-   // const_decl: Constant ID COLON type ASSIGN expression ;
    @Override 
    public String visitConst_decl(calParser.Const_declContext ctx) { 
-      String id = ctx.ID().getText(); // id
-      String declared_type = ctx.type().getText(); // type
-      String expression = ctx.expression().getText(); // expression
+		String id = ctx.ID().getText();
+		String type = visit(ctx.type());
+		String expr = visit(ctx.expression());
+		SymbolTableEntry tableEntry = (SymbolTableEntry) symbolTable.get(id);
+      
+      // Local Scope
+      scope = id;
+      
+      // String to store table tableEntry type
+      String eType;
 
-      SymbolTableEntry e = (SymbolTableEntry) st.getSymbol(id);
-
-      if (id.equalsIgnoreCase(e.id) && scope.equals(e.scope)) {
-         System.out.println("Already declared in this scope");
-      } else if (expression.equals(DataType.unknown)) {
-         System.out.println("Variable used before declaration");
-      } else if (declared_type != expression) {
-         System.out.println("Assignment of different types");
+      if(tableEntry.type != "unknown"){
+         eType = tableEntry.type;
       } else {
-         st.putSymbol(id, declared_type, DataType.const_decl, scope);
+         eType = getType(expr);
       }
 
-      return visitChildren(ctx); 
-   }
-
-   @Override 
-   public String visitFunction_list(calParser.Function_listContext ctx) { 
-      return visitChildren(ctx); 
+		if(id.equalsIgnoreCase(tableEntry.id) && scope.equals(tableEntry.scope)){
+			System.out.println("Declare Error: " + id + " declared already in " + scope);
+      } else if (expr.equals(unknown)) {
+			System.out.println("Declare Error: " + expr + " used before being declared");
+		}
+      
+		if (!type.equals(eType)){				
+			System.out.println("Compatibility Error: cannot assign " + type + " to " + expr);
+		} else{
+			symbolTable.put(id, type, constDecl, scope);
+      }
+      
+		return unknown; 
    }
 
    @Override 
    public String visitFunction(calParser.FunctionContext ctx) { 
-      String type = visit(ctx.type());
+      
       String id = ctx.ID().getText();
-
-      // Check function with ID doesn't already exist
-      SymbolTableEntry e = (SymbolTableEntry) st.getSymbol(id);
-      if (id.equals(e.id) && e.declType == DataType.function) {
-         System.out.println("Declaration Error: Function cannot be declared more than once");
-     }
-
+      String type = visit(ctx.type());
+      
+      // Local Scope
       scope = id;
-      functions.add(id);
 
-      String signature = type + "(";
-      String parameters = visit(ctx.parameter_list());
-      signature = signature + parameters + ")";
+      // Check that ID doesn't already exist
+      SymbolTableEntry tableEntry = (SymbolTableEntry) symbolTable.get(id);
 
-      visit(ctx.decl_list());
-
-      // TODO: Not sure about this terminal node
-      visit(ctx.Begin());
-
-      visit(ctx.statement_block());
-
-      String returnType = visit(ctx.returnStatement());
-
-      if (returnType != type) {
-         System.out.println("Type Error: Function (" + id + ") must return " + type);
+      if ((id == tableEntry.id) & (tableEntry.origin == function)) {
+         System.out.println("Declare Error: Function cannot be declared more than once");
       }
 
-      visit(ctx.End());
-      st.putSymbol(id, signature, DataType.function, scope);
+      // Default value if no value retrieved
+      String returnType = unknown;
+
+      // Formatting with LBR and RBR
+      String parameters = type + "(";
+      String args = visit(ctx.parameter_list());
+      parameters = parameters + args + ")";
+
+      // Check if optional argument is included
+      if(ctx.getChild(11).getText().equals(closingBracket)){
+         String returnValue = visit(ctx.return_expr());
+         SymbolTableEntry returnVal = (SymbolTableEntry) symbolTable.get(returnValue);
+         returnType = returnVal.type;
+      }
+
+      visit(ctx.decl_list());
+      visit(ctx.statement_block());
+
+      // if (returnType != type) {
+      //    System.out.println("Type Error: Function '" + id + "' must return " + type + " and not " + returnType);
+      // }
+
+      symbolTable.put(id, parameters, function, scope);
+
+      // Reset Scope
       scope = "global";
 
-      return visitChildren(ctx);
+      // Remove function because it was called
+      progFuncs.remove(id);
+      return unknown;
    }
 
    @Override 
-   public String visitReturnStatement(calParser.ReturnStatementContext ctx) {
-      if(ctx.getChildCount() == 0){
-         return String.valueOf(DataType.unknown);
-      }
-      else if(ctx.getChildCount() == 1){
-         return visit(ctx.expression());
-      }
-      
-      return String.valueOf(DataType.unknown);
+   public String visitReturn_expr(calParser.Return_exprContext ctx) { 
+      return visit(ctx.expression()); 
    }
+
 
    @Override 
    public String visitType(calParser.TypeContext ctx) { 
-      String type = ctx.getText();
+      // Get type from op and match with string
+      String type = ctx.op.getText();
 
       if(type.equalsIgnoreCase("integer")) {
-         return String.valueOf(DataType.integer);
+         return integer;
       }
 
       else if(type.equalsIgnoreCase("boolean")) {
-         return String.valueOf(DataType.bool);
+         return bool;
       }
 
-      return String.valueOf(DataType.unknown);
+      return unknown;
    }
 
-   @Override 
-   public String visitParameter_list(calParser.Parameter_listContext ctx) { 
-      return visitChildren(ctx.nemp_parameter_list()); 
-   }
-
-   // nemp_parameter_list: ID COLON type (COMMA nemp_parameter_list)? ;
    @Override
    public String visitNemp_parameter_list(calParser.Nemp_parameter_listContext ctx) { 
-      String parameters = "";
+      String args = "";
       String id = ctx.ID().getText();
-
-      String type = visitChildren(ctx.type());
+      String type = visit(ctx.type());
       
-      SymbolTableEntry e = (SymbolTableEntry) st.getSymbol(id);
-      if(id.equalsIgnoreCase(e.id) && scope.equals(e.scope)) {
-          System.out.println("Declaration Error: Variable " + id + " already declared in " + scope + " scope");
+      SymbolTableEntry tableEntry = (SymbolTableEntry) symbolTable.get(id);
+      if(id.equalsIgnoreCase(tableEntry.id) & scope.equals(tableEntry.scope)) {
+         System.out.println("Declare Error: Variable " + id + " already declared in " + scope + " scope");
       } else {
-         // TODO fix this datatype
-          st.putSymbol(id, type, DataType.const_decl, scope);
+         // scope = type
+         symbolTable.put(id, type, type, scope);
       } 
 
-      parameters = parameters + type;
+      args = args + type;
 
-      if(ctx.getChildCount() > 3){
-         parameters = parameters + ", " + visitChildren(ctx.nemp_parameter_list());
+      // Check if nemp_parameter_list is included
+      if(ctx.getChildCount() == 5){
+         args = args + ", " + visit(ctx.nemp_parameter_list());
       }
 
-      return parameters;
+      return args;
    }
 
    @Override 
    public String visitMain(calParser.MainContext ctx) { 
+      // Main scope
       scope = "main";
-      
+      // Visit all
       String data = visitChildren(ctx);
-
+      // Reset scope
       scope = "global";
 
       return data;
    }
 
    @Override 
-   public String visitStatement_block(calParser.Statement_blockContext ctx) { 
-      return visitChildren(ctx); 
-   }
-
-   // Statements
-   @Override 
    public String visitAssignStm(calParser.AssignStmContext ctx) { 
-      String id = ctx.ID().getText();
+      
+      String thisID = ctx.ID().getText();
+      String expr = visit(ctx.expression());
 
-      // Check id has been declared
-      SymbolTableEntry e = (SymbolTableEntry) st.getSymbol(id);
-      if (!id.equalsIgnoreCase(e.id)) {
-         System.out.println("Assignment Error: Variable (" + id + ") must be declared before use");
-      }
-      if (e.declType == DataType.const_decl) {
-         System.out.println("Assignment Error: Cannot assign to a constant");
-      }
+      SymbolTableEntry tableEntry = (SymbolTableEntry) symbolTable.get(thisID);
 
-      DataType expression = (DataType) visit(ctx.expression());
-      if (toDataType(e.type) != expression) {
-          System.out.println("Value Error: Cannot assign " + expression + " to " + e.type);
+      // Check if the id existst already
+      if (!thisID.equalsIgnoreCase(tableEntry.id)) {
+			System.out.println("Assignment Error: Variable (" + thisID + ") must be declared before use");
       }
-
-      return String.valueOf(DataType.unknown);
+      
+      // Can't assign to a constant
+		if (tableEntry.origin.equals(constDecl)) {
+			System.out.println("Compatibility Error: Cannot assign to a constant");
+      }
+      
+      // Check for incorrect boolean assignment
+      if ( (tableEntry.type.equalsIgnoreCase("boolean")) & !isBoolean(expr)) {
+			System.out.println("Compatibility Error: Cannot assign " + expr + " to boolean");
+      }
+      
+		return unknown;
    }
 
    @Override 
    public String visitParensStm(calParser.ParensStmContext ctx) { 
+      
       String id = ctx.ID().getText();
-      SymbolTableEntry e = (SymbolTableEntry) st.getSymbol(id);
-      if (!id.equals(e.id)) {
-         System.out.println("Invocation Error: Function (" + id + ") has not been defined");
+      
+      SymbolTableEntry tableEntry = (SymbolTableEntry) symbolTable.get(id);
+      if (!id.equals(tableEntry.id)) {
+         System.out.println("Function Error: Function (" + id + ") has not been defined");
       }
 
-      // Check it has correct integer of arguments
-      Integer expectedNumArgs = getNumArgsFromSignature(e.type);
-      DataType type = getReturnTypeFromSignature(e.type);
-
+      int expectedNumArgs = getNumArgs(tableEntry.type);
+      String type = tableEntry.type;
+            
       String args = visit(ctx.arg_list());
-      
-      if (args.length() > 1){
-         args = args.substring(0, args.length() - 1);
-      }
-      String signature = type.toString() + "(" + args.substring(0, args.length()) + ")";
-      
-      Integer actualNumArgs = getNumArgsFromSignature(signature);
+      int numArgs = args.length();
 
-      if (expectedNumArgs != actualNumArgs) {
-         System.out.println("Invocation Error: Function (" + id + ") expects " + expectedNumArgs + " arguments but got " + actualNumArgs);
+      if(numArgs > 1) {
+			args = args.substring(0, numArgs - 1);
       }
-      
-      // Check arguments are of correct type
-      ArrayList<DataType> expectedTypes = getArgumentTypesFromSignature(e.type);
-      ArrayList<DataType> actualTypes = getArgumentTypesFromSignature(signature);
 
-      for (int i = 0; i < expectedTypes.size() ; i++) {
-         DataType exp = expectedTypes.get(i);
-         DataType act = actualTypes.get(i);
-         if (!exp.equals(act)) {
-               System.out.println("Invocation Error: Expected type " + exp + " for argument " + i + " but got " + act);
+      // Format with LBR and RBR
+      String params = type + "(" + args + ")";
+      // The actual number of arguments presented
+      Integer actualNumArgs = getNumArgs(params);
+
+      // Comparing actual and expected number of arguments
+      if(expectedNumArgs != actualNumArgs){
+         System.out.println("Function Error: Function (" + id + ") expects " + expectedNumArgs + " arguments but got " + actualNumArgs);
+      }
+
+      // Comparing each argument type
+      ArrayList<String> expectedTypes = argsTypes(tableEntry.type);
+      ArrayList<String> actualTypes = argsTypes(params);
+
+      for (int i = 0; i < expectedTypes.size(); i++) {
+         String expected = expectedTypes.get(i);
+         String actual = actualTypes.get(i);
+         if (!expected.equals(actual)) {
+            System.out.println("Function Error: Expected type " + expected + " for argument " + i + " but got " + actual);
          }
       }
 
-      // Remove from functions list
-      functions.remove(id);
-      // return functions return type
-      return String.valueOf(getReturnTypeFromSignature(e.type));
+      // Return function return types
+		return returnArgTypes(tableEntry.type);
    }
 
    @Override 
@@ -261,199 +270,286 @@ public class SemanticCheckVisitor extends calBaseVisitor<String> {
 
    @Override 
    public String visitIfElseStm(calParser.IfElseStmContext ctx) { 
-      return visitChildren(ctx);
+      visit(ctx.condition());
+      visit(ctx.statement_block());
+      visit(ctx.else_statement());
 
+      return unknown;
    }
-
-	@Override public String visitElseStatement(calParser.ElseStatementContext ctx) { 
-      return visit(ctx.statement_block()); 
-   }
-
 
    @Override 
    public String visitWhileStm(calParser.WhileStmContext ctx) { 
-      return visitChildren(ctx); 
+      visit(ctx.condition());
+      visit(ctx.statement_block());
+
+      return unknown;
    }
 
    @Override 
    public String visitSkipStm(calParser.SkipStmContext ctx) { 
-      return null; 
+      return unknown; 
    }
-
-
-
-
 
    @Override 
    public String visitBinaryOp(calParser.BinaryOpContext ctx) { 
-      return visitChildren(ctx); 
+
+      String left = visit(ctx.frag(0));
+      String right = visit(ctx.frag(1));
+      
+      SymbolTableEntry leftEntry = (SymbolTableEntry) symbolTable.get(left);
+      String leftType;
+
+      SymbolTableEntry rightEntry = (SymbolTableEntry) symbolTable.get(right);
+      String rightType;
+
+      // Left Type
+      if(leftEntry.type == "unknown"){
+         leftType = getType(left);
+      } 
+      else {
+         leftType = leftEntry.type;
+      }
+
+      // Right Type
+      if(rightEntry.type == "unknown"){
+         rightType = getType(right);
+      } 
+      else {
+         rightType = rightEntry.type;
+      }
+
+      // Check valid comparsion
+      if(leftType == integer | rightType == integer){
+         return integer;
+      } else{
+         System.out.println("Compatibility Error: " + left + " is not compatible with " + right);
+      }   
+
+		return unknown; 
    }
 
    @Override 
    public String visitParensOp(calParser.ParensOpContext ctx) { 
-      return visitChildren(ctx); 
+      return visit(ctx.expression());
    }
 
    @Override 
-   public String visitArglistOp(calParser.ArglistOpContext ctx) { 
-      return visitChildren(ctx); 
+   public String visitArglistOp(calParser.ArglistOpContext ctx) {
+      return visit(ctx.arg_list()); 
    }
 
    @Override 
-   public String visitFragOp(calParser.FragOpContext ctx) { 
-      return visitChildren(ctx); 
-   }
-
-   @Override 
-   public String visitBinary_arith_op(calParser.Binary_arith_opContext ctx) { 
-
-
-
-      return visitChildren(ctx); 
+   public String visitFragOp(calParser.FragOpContext ctx) {
+      return visit(ctx.frag()); 
    }
 
    @Override 
    public String visitNegOp(calParser.NegOpContext ctx) { 
-      return visitChildren(ctx); 
+      String id = ctx.ID().getText();
+      String posID = getAbsString(id);
+
+      SymbolTableEntry tableEntry = (SymbolTableEntry) symbolTable.get(posID);
+      if (!(posID.equals(tableEntry.id))) {
+         System.out.println("Declare Error: Variable " + id + " must be declared before first use");
+      }
+
+      return id; 
    }
 
    @Override 
    public String visitNumOP(calParser.NumOPContext ctx) { 
-      return visitChildren(ctx); 
+      return ctx.NUMBER().getText();
    }
    
    @Override 
-   public String visitBooleanOp(calParser.BooleanOpContext ctx) { 
-      return visitChildren(ctx); 
+   public String visitTrue(calParser.TrueContext ctx) { 
+      return ctx.True().getText();
+   }
+
+   @Override 
+   public String visitFalse(calParser.FalseContext ctx) { 
+      return ctx.False().getText();
+   }
+
+   @Override 
+   public String visitNegateOp(calParser.NegateOpContext ctx) { 
+      return visit(ctx.condition());
    }
 
    @Override 
    public String visitExprOp(calParser.ExprOpContext ctx) { 
-      return visitChildren(ctx); 
-   }
-
-
-
-
-
-   @Override 
-   public String visitNegateOp(calParser.NegateOpContext ctx) { 
-      return visitChildren(ctx); 
-   }
-
-
-
-
-   @Override 
-   public String visitCondOp(calParser.CondOpContext ctx) { 
-      return visitChildren(ctx); 
-   }
-
-   @Override 
-   public String visitExprCompOp(calParser.ExprCompOpContext ctx) { 
-      DataType left = (DataType) visit(ctx.expression(0));
-      DataType right = (DataType) visit(ctx.expression(1));
-      String operator = Integer.toString(ctx.op.getType());
-
-      if (!isValidComp(left, right, operator)){
-         return String.valueOf(DataType.unknown);
-      }
-      return String.valueOf(DataType.bool);
+      return visit(ctx.expression()); 
    }
 
    @Override 
    public String visitParensCondOp(calParser.ParensCondOpContext ctx) { 
-      return visitChildren(ctx); 
+      return visit(ctx.condition()); 
    }
 
    @Override 
-   public String visitArg_list(calParser.Arg_listContext ctx) { 
-      return visitChildren(ctx); 
+   public String visitExprCompOp(calParser.ExprCompOpContext ctx) { 
+
+      String left = visit(ctx.expression(0));
+      String right = visit(ctx.expression(1));
+      String operator = visit(ctx.comp_op());
+
+      SymbolTableEntry leftEntry = (SymbolTableEntry) symbolTable.get(left);
+      String leftType;
+
+		SymbolTableEntry rightEntry = (SymbolTableEntry) symbolTable.get(right);
+      String rightType;
+      
+      // Left Type
+      if(leftEntry.type == "unknown"){
+         leftType = getType(left);
+      } 
+      else {
+         leftType = leftEntry.type;
+      }
+
+      // Right Type
+      if(rightEntry.type == "unknown"){
+         rightType = getType(right);
+      } 
+      else {
+         rightType = rightEntry.type;
+      }
+
+      // Check valid comparsion
+      if(leftType == rightType){
+         return bool;
+      } 
+      else {
+         System.out.println("Type Error: Cannot compare " + leftType  + " and " + rightType  + " using " + operator);
+      }
+
+      return unknown;
+   }
+
+   @Override 
+   public String visitComp_op(calParser.Comp_opContext ctx) { 
+      String operator = ctx.op.getText();
+      return operator;
+   }
+
+   @Override 
+   public String visitCondOp(calParser.CondOpContext ctx) { 
+      String leftValue = visit(ctx.condition(0));
+      String rightValue = visit(ctx.condition(1));
+      String operator = ctx.op.getText();
+
+      if (isBoolean(leftValue) && isBoolean(rightValue)) {
+         System.out.println("Compatibility Error: Cannot perform " + operator + " on types " + leftValue + " and " + rightValue);
+      }
+
+      return unknown;
    }
 
    @Override 
    public String visitNemp_arg_list(calParser.Nemp_arg_listContext ctx) { 
-      return visitChildren(ctx); 
-   }
+      String args = "";
 
-   private DataType toDataType(String s) {
-      if (s.equals("integer")) {
-          return DataType.integer;
-      }
-      if (s.equals("bool")) {
-          return DataType.bool;
-      }
-      if (s.equals("varDecl")) {
-          return DataType.var_decl;
-      }
-      if (s.equals("constDecl")) {
-          return DataType.const_decl;
-      }
-      if (s.equals("assign")) {
-          return DataType.assign;
-      }
-      if (s.equals("function")) {
-          return DataType.function;
-      }
-      if (s.equals("compOp")) {
-          return DataType.compOp;
-      }
+		if(ctx.getChildCount() != 0){
+			String id = ctx.ID().getText();
+			SymbolTableEntry tableEntry = (SymbolTableEntry) symbolTable.get(id);
 
-      return DataType.unknown;
-  }
-
-   private Integer getNumArgsFromSignature(String sig) {
-      String[] parts = sig.split("\\(");
-      String secondHalf = parts[1];
-      String args = secondHalf.substring(0, secondHalf.length() - 1);
-      String[] argv = args.split(",");
-      if (argv[0].equals("")) {
-         return 0;
-      }
-      return argv.length;
-   }
-
-   private DataType getReturnTypeFromSignature(String sig) {
-      String[] parts = sig.split("\\(");
-      return toDataType(parts[0]);
-   }
-
-   private ArrayList<DataType> getArgumentTypesFromSignature(String sig) {
-      ArrayList<DataType> dataTypeArray = new ArrayList<>(); 
-      
-      String[] parts = sig.split("\\(");
-      String secondHalf = parts[1];
-      String args = secondHalf.substring(0, secondHalf.length() - 1);
-      String[] argv = args.split(",");
-      if (argv[0].equals("")) {
-         return dataTypeArray;
-      } else {
-         for (String type : argv) {
-            dataTypeArray.add(toDataType(type));
+         if(!id.equals(tableEntry.id)){
+				System.out.println("Declare Error: Variable " + id + " already declared in " + scope + " scope");
          }
-         return dataTypeArray;
+
       }
+      
+      // If nemp_arg_list is included
+		if(ctx.getChildCount() == 3)
+         args = args + visit(ctx.nemp_arg_list());
+         
+		return args; 
+   }
+   
+
+   // ****** Helper Functions ****************
+
+   // Get the positive of value
+   private String getAbsString(String value){
+
+		if(value.substring(0,1).equals("-")){
+			value = value.replace("-", "");
+		}
+		return value;
    }
 
-   private boolean isValidComp(DataType left, DataType right, String op) {
-
-      boolean isValid = true;
-      if (op.equals("==") || op.equals("!=")) {
-          if ((left != DataType.bool | right != DataType.bool) & 
-              (left != DataType.integer | right != DataType.integer)) {
-                  isValid = false;
-                  System.out.println("Type Error: Cannot compare types " + 
-                                      left + " and " + right + 
-                                      " with operator " + op);
-          }
-      } else {
-          if (left != DataType.integer | right != DataType.integer) {
-              isValid = false;
-              System.out.println("Type Error: Cannot compare types " + 
-                                  left + " and " + right + 
-                                  " with operator " + op);
-          }
+   // Get the type if unknown
+   public String getType(String s){
+      
+      if(isInteger(s)){
+         return integer;
       }
-      return isValid;
-  }
+      
+      else if(isBoolean(s)){
+         return bool;
+      }
+
+	   return unknown;
+   }
+   
+   // Get the number of argumnets by splitting them
+   private Integer getNumArgs(String sig) {
+      // Starting marker -> (
+		String[] parts = sig.split("\\(");
+		String rightSide = parts[1];
+      String args = rightSide.substring(0, rightSide.length() - 1);
+      // Split on comma
+      String[] argsSplit = args.split(",");
+      // Empty string -> no args
+		if (argsSplit[0].equals("")) {
+			return 0;
+		}
+		return argsSplit.length;
+   }
+   
+   private ArrayList<String> argsTypes(String sig) {
+		ArrayList<String> typeArray = new ArrayList<>(); 
+		
+		String[] parts = sig.split("\\(");
+		String rightSide = parts[1];
+		String args = rightSide.substring(0, rightSide.length() - 1);
+		String[] argsSplit = args.split(",");
+		
+		if (argsSplit[0].equals("")) {
+		   return typeArray;
+		} 
+	
+		else {
+			typeArray = new ArrayList<>(Arrays.asList(argsSplit));
+      }
+      
+		return typeArray;
+   }
+    
+   // Function to get the return type of the function
+   private String returnArgTypes(String sig) {				
+	   String[] parts = sig.split("\\(");
+		return parts[0];
+   }
+
+   // Bool checker
+   public boolean isBoolean(String s){
+      return (s.equalsIgnoreCase("true") | s.equalsIgnoreCase("false"));
+   }
+
+   // Int checker
+   public Boolean isInteger(String s){
+      if(s == null) {
+         return false;
+      }
+
+      try{
+         Integer.parseInt(s);
+      }
+      catch (NumberFormatException tableEntry){
+         return false;
+      }
+      return true;
+   }
+
 }

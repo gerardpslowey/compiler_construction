@@ -9,7 +9,6 @@ import java.util.Scanner;
 public class Cal {
 
 	static SymbolTable st = new SymbolTable();
-	static String scope = "global";
 
 	public static void main (String[] args) throws Exception{
 
@@ -53,37 +52,33 @@ public class Cal {
 			System.exit(1);
 		}
 
-		try{
-			// Get a stream of tokens
-			calLexer lexer = new calLexer(CharStreams.fromStream(is));
-			
-			// Remove default error listeners and add my own CalErrorListener
-			lexer.removeErrorListeners();
-			lexer.addErrorListener(new CalErrorListener());
+		// Get a stream of tokens
+		calLexer lexer = new calLexer(CharStreams.fromStream(is));
+		
+		// Remove default error listeners and add my own CalErrorListener
+		lexer.removeErrorListeners();
+		lexer.addErrorListener(new CalErrorListener());
 
-			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			
-			calParser parser = new calParser(tokens);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		
+		calParser parser = new calParser(tokens);
 
-			// As before, replace the default error listeners for the parser
-			parser.removeErrorListeners();
-			parser.addErrorListener(new CalErrorListener());
+		// As before, replace the default error listeners for the parser
+		parser.removeErrorListeners();
+		parser.addErrorListener(CalErrorListener.INSTANCE);
 
-			// Parse tree or abstract syntax tree
-			ParseTree tree = parser.prog();
-			
-			// Initiate a walk of the tree
-			SemanticCheckVisitor visitor = new SemanticCheckVisitor();
-			System.out.println(visitor.visit(tree));
+		// Parse tree or abstract syntax tree
+		ParseTree tree = parser.prog();
 
-			// IRCodeVisitor IRVisitor = new IRCodeVisitor();
-			// System.out.println(IRVisitor.visit(tree));
+		// Print the compile result
+		System.out.println(inputFile + CalErrorListener.INSTANCE.toString());
+		
+		// Visit the tree for semantics
+		SemanticCheckVisitor visitor = new SemanticCheckVisitor();
+		visitor.visit(tree);
 
-			System.out.println(inputFile + " parsed successfully");
-
-		} catch (Exception err) {
-			System.out.println(err.getMessage());
-			System.out.println(inputFile + " has not parsed");
-		}
+		// Generate IR Code
+		IRCodeGenerator IRVisitor = new IRCodeGenerator();
+		IRVisitor.visit(tree);
 	}
 }

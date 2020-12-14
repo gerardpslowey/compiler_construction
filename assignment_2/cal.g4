@@ -16,13 +16,13 @@ function:            type ID LBR parameter_list RBR Is
                      decl_list
                      Begin
                      statement_block
-                     Return LBR returnStatement RBR SEMI
+                     Return LBR return_expr RBR SEMI
                      End
                      ;
 
-returnStatement:     (expression)? ;
+return_expr:        (expression)? ;
 
-type:                (Integer | Boolean | Void) ;
+type:                op = (Integer | Boolean | Void) ;
 parameter_list:      nemp_parameter_list? ;
 nemp_parameter_list: ID COLON type (COMMA nemp_parameter_list)? ;
 
@@ -38,36 +38,35 @@ statement_block:     (statement statement_block)? ;
 statement:           ID ASSIGN expression SEMI                                #AssignStm
                      | ID LBR arg_list RBR SEMI                               #ParensStm
                      | Begin statement_block End                              #BlockStm
-                     | If condition Begin statement_block End elseStatement   #IfElseStm
+                     | If condition Begin statement_block End else_statement  #IfElseStm
                      | While condition Begin statement_block End              #WhileStm
                      | Skipp SEMI                                             #SkipStm
                      ;
 
-// expression:          frag (binary_arith_op frag)* ; 
+else_statement:      Else Begin statement_block End ;
 
-elseStatement:       Else Begin statement_block End ;
-
-expression:          frag binary_arith_op frag                    #BinaryOp
-                     | LBR expression RBR                         #ParensOp
-                     | ID LBR arg_list RBR                        #ArglistOp
-                     | frag                                       #FragOp
+expression:          frag binary_arith_op frag                                 #BinaryOp
+                     | LBR expression RBR                                      #ParensOp
+                     | ID LBR arg_list RBR                                     #ArglistOp
+                     | frag                                                    #FragOp
                      ;
 
+binary_arith_op:     op = (PLUS | MINUS) ;
 
-binary_arith_op:     PLUS | MINUS ;
-frag:                MINUS? ID (LBR arg_list RBR)?                #NegOp
-                     | NUMBER                                     #NumOP
-                     | True                                       #BooleanOp
-                     | False                                      #BooleanOp
-                     | LBR expression RBR                         #ExprOp
+frag:                MINUS? ID                                                  #NegOp
+                     | NUMBER                                                   #NumOP
+                     | True                                                     #True
+                     | False                                                    #False
+                     | LBR expression RBR                                       #ExprOp
                      ;
 
-condition:           NEGATE condition                             #NegateOp
-                     | LBR condition RBR                          #ParensCondOp
-                     | expression op = (EQUAL | NEQUAL | LTHAN | LTHANE | GTHAN | GTHANE) expression              #ExprCompOp
-                     | condition op=(OR | AND) condition          #CondOp
+condition:           NEGATE condition                                           #NegateOp
+                     | LBR condition RBR                                        #ParensCondOp
+                     | expression comp_op expression                            #ExprCompOp
+                     | condition op = (OR | AND) condition                      #CondOp
                      ;
 
+comp_op:             op = (EQUAL | NEQUAL | LTHAN | LTHANE | GTHAN | GTHANE) ;
 arg_list:            nemp_arg_list? ;
 nemp_arg_list:       ID (COMMA nemp_arg_list)? ;
 
@@ -91,8 +90,8 @@ fragment R:		      'r' | 'R' ;
 fragment S:		      's' | 'S' ;
 fragment T:		      't' | 'T' ;
 fragment U:		      'u' | 'U' ;
-fragment V:         'v' | 'V' ;
-fragment W:         'w' | 'W' ;
+fragment V:           'v' | 'V' ;
+fragment W:           'w' | 'W' ;
 fragment Y:		      'y' | 'Y' ;
 
 fragment Letter :    [a-zA-Z] ;

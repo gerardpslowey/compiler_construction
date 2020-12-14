@@ -4,3 +4,5 @@
 /assignment_2/generated_files
 /assignment_2/.antlr
 /assignment_2/.vscode
+/assignment_1/*.class
+/assignment_2/*.class
